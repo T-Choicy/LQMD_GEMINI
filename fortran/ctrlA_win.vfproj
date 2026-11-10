@@ -21,7 +21,7 @@
   </Configurations>
   <Files>
     <Filter Name="Source Files" Filter="for;f;ftn;fpp">
-      <File RelativePath=".\ctrlA_win.for"/>
+      <File RelativePath=".\ctrlA_win.f"/>
     </Filter>
   </Files>
   <Globals/>

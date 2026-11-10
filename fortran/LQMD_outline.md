@@ -12,16 +12,16 @@
 ## 2. 文件架构
 
 ```
-LQMD_v5_0.for                  ← 驱动器: INCLUDE 4 个子模块
-  main_v5_0.for  (2,006 行)    ← 主程序 PROGRAM LQMD: 输入/输出/主循环
-  evolt_v5_0.for (9,745 行)    ← 演化+碰撞+力+表面并合 (117 个子程序)
-  nncoll_v5_0.for(3,833 行)    ← 强子-强子碰撞动力学 (12 个子程序)
-  cross_v5_0.for (3,014 行)    ← 截面数据库 (~40 个函数)
+LQMD_v5_0.f                  ← 驱动器: INCLUDE 4 个子模块
+  main_v5_0.f  (2,006 行)    ← 主程序 PROGRAM LQMD: 输入/输出/主循环
+  evolt_v5_0.f (9,745 行)    ← 演化+碰撞+力+表面并合 (117 个子程序)
+  nncoll_v5_0.f(3,833 行)    ← 强子-强子碰撞动力学 (12 个子程序)
+  cross_v5_0.f (3,014 行)    ← 截面数据库 (~40 个函数)
 
-ctrlL_v5_0.for (597 行)        ← 独立批处理控制程序 (PROGRAM CONTROL)
+ctrlL_v5_0.f (597 行)        ← 独立批处理控制程序 (PROGRAM CONTROL)
 ```
 
-## 3. main_v5_0.for — 主程序
+## 3. main_v5_0.f — 主程序
 
 ### 3.1 输入文件
 
@@ -111,7 +111,7 @@ PROGRAM LQMD
 └─ 最终输出、关闭文件
 ```
 
-## 4. evolt_v5_0.for — 演化/碰撞/力/表面并合模块
+## 4. evolt_v5_0.f — 演化/碰撞/力/表面并合模块
 
 这是最大的文件（9,745 行），包含 117 个子程序，是 LQMD 的物理核心。
 
@@ -238,7 +238,7 @@ PROGRAM LQMD
 6. 动量更新: p(t+dt) = p(t) + dt*ΣF
 ```
 
-## 5. nncoll_v5_0.for — 强子碰撞动力学
+## 5. nncoll_v5_0.f — 强子碰撞动力学
 
 12 个子程序，处理所有强子-强子碰撞道。
 
@@ -269,7 +269,7 @@ PROGRAM LQMD
 - 反 Kaon 获得吸引势 (~-100 MeV at ρ₀)
 - 有效质量: `m* = √(m² - a·ρ + (bρ)²) ± bρ`，影响产生阈值
 
-## 6. cross_v5_0.for — 截面数据库
+## 6. cross_v5_0.f — 截面数据库
 
 约 40 个函数，提供所有反应道的参数化截面（单位 mb）。
 
@@ -296,20 +296,20 @@ PROGRAM LQMD
 - Kaon 产生: Tsushima, Sibirtsev, Thomas, Li (PRC 59, 1999)
 - 反核子: Cugnon-Vandermeulen + PDG
 
-## 7. ctrlL_v5_0.for — 批处理控制程序（独立可执行程序）
+## 7. ctrlL_v5_0.f — 批处理控制程序（独立可执行程序）
 
-`PROGRAM CONTROL`（597 行），是独立的批处理调度器，**不被 LQMD_v5_0.for 包含**。
+`PROGRAM CONTROL`（597 行），是独立的批处理调度器，**不被 LQMD_v5_0.f 包含**。
 
 ### 功能
 
 - 读取 `INPUT.in`（任务数、每任务事件数、可执行文件名、超时）
 - 读取 `LQMD0.in`（LQMD 物理参数模板，自动为每个子任务生成定制 LQMD.in）
 - 为 `NFILE` 个子任务创建编号目录 (001, 002, ...)
-- 编译 LQMD.for → 复制可执行文件 → 写入定制 LQMD.in → 后台提交 (nohup)
+- 编译 LQMD.f → 复制可执行文件 → 写入定制 LQMD.in → 后台提交 (nohup)
 - 监控所有子任务的 `monitor*.dat` 文件，检测卡死/崩溃
 - 崩溃恢复：kill 进程 → 从最后完成事件重新提交
 - 全部完成后合并输出文件 (initangm.dat, SURF_COAL.dat, coll.out 等) 到 `results/`
-- 可选调用后处理程序 `ctrlA.for`
+- 可选调用后处理程序 `ctrlA.f`
 
 ### 子程序
 
@@ -352,7 +352,7 @@ PROGRAM LQMD
 ## 10. 版本与编译信息
 
 - **版本**: v5_0（含表面并合 + 结团时刻点输出）
-- **文件**: `LQMD_v5_0.for` + 4 个 INCLUDE 文件，共 ~19,000 行
+- **文件**: `LQMD_v5_0.f` + 4 个 INCLUDE 文件，共 ~19,000 行
 - **编译器**: Intel Fortran `ifort`/`ifx`
 - **关联输入**: `LQMD.in`（主控参数）、`LQMD0.in`（批处理模板）、`INPUT.in`（ctrlL 批处理用）
 - **产物**: `LQMD.exe`（动力学主程序）、`CONTROL.exe`（批处理控制器）

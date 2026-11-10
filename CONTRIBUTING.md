@@ -2,11 +2,11 @@
 
 ## 使用一个确定版本
 
-VERSION当前为0.1.0，对应不可移动的注释标签v0.1.0。正式计算优先checkout标签并重新编译，保留Git提交号和程序SHA。只有版本号而没有提交号，不足以识别未发布改动。
+VERSION当前为0.1.1，对应不可移动的注释标签v0.1.1。正式计算优先checkout标签并重新编译，保留Git提交号和程序SHA。只有版本号而没有提交号，不足以识别未发布改动。
 
 ```powershell
 git fetch --tags origin
-git switch --detach v0.1.0
+git switch --detach v0.1.1
 ./scripts/build_windows_controllers.ps1 -Rebuild
 ```
 
@@ -34,11 +34,11 @@ git push -u origin HEAD
 发布前更新VERSION、CHANGELOG、PROVENANCE，跑仓库检查、Python测试、真实编译、控制器模拟测试及受影响物理回归。提交后在干净工作区生成不可移动标签，再推送：
 
 ```powershell
-git tag -a v0.1.1 -m 'v0.1.1: 发布内容与验证范围'
+git tag -a v0.1.2 -m 'v0.1.2: 发布内容与验证范围'
 git push origin main
-git push origin v0.1.1
+git push origin v0.1.2
 ```
 
-这里的0.1.1只是后续发布示例，不能在未完成变更时照抄创建。发现已发布标签有问题时发布新标签，不删改旧标签。更新PROVENANCE时按其生成脚本重算载荷SHA；不要将提交自身哈希嵌入自身文件形成循环。
+这里的0.1.2只是后续发布示例，不能在未完成变更时照抄创建。发现已发布标签有问题时发布新标签，不删改旧标签。更新PROVENANCE时按其生成脚本重算载荷SHA；不要将提交自身哈希嵌入自身文件形成循环。
 
 每次正式计算保存版本、提交号、dirty状态、输入/质量表/程序SHA、编译器、事件数、种子、分片和归一化。脏工作区只用于调试；若确需研究试算，归档补丁并标明未发布，不能称它等同某个标签。

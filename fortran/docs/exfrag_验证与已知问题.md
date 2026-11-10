@@ -8,9 +8,9 @@
 
 | 文件 | 行数 | SHA-256 |
 |---|---:|---|
-| exfrag.for | 2 | `91A5B331E190E4E328A0DEFAB98B7DB652573720C1C369CFD09926FE440F994F` |
-| GEMMOD.for | 10786 | `4AA5D6F02B16A8517419485E60C128039F89C0E29478CA69B6B9A0752387FF39` |
-| anahyp.for | 4009 | `46781DB82D844AC11E1686D9FBBE9FCE42467F65DCEF3DAA212EF85FAE4E1579` |
+| exfrag.f | 2 | `91A5B331E190E4E328A0DEFAB98B7DB652573720C1C369CFD09926FE440F994F` |
+| GEMMOD.f | 10786 | `4AA5D6F02B16A8517419485E60C128039F89C0E29478CA69B6B9A0752387FF39` |
+| anahyp.f | 4009 | `46781DB82D844AC11E1686D9FBBE9FCE42467F65DCEF3DAA212EF85FAE4E1579` |
 
 源码目录原已在工作区中且未被 Git 跟踪；因此仅看 `git diff` 不能证明其内容未变。本次以三个入口相关文件的 SHA-256 做前后对照。旧注释存在编码损坏，本次没有为改善可读性而重编码源文件。
 
@@ -19,7 +19,7 @@
 实测环境：Windows，Intel Fortran `ifx 2025.3.2 Build 20260112`，oneAPI + Visual Studio x64 链接环境。所有构建与人工案例放在被忽略的 `tmp/exfrag-doc-audit/`，不作为生产生成物交付。
 
 ```bat
-ifx /nologo /c /fixed /extend-source:132 /warn:all /check:all /traceback /Od /I"D:\Spallation\fortran" "D:\Spallation\fortran\exfrag.for"
+ifx /nologo /c /fixed /extend-source:132 /warn:all /check:all /traceback /Od /I"D:\Spallation\fortran" "D:\Spallation\fortran\exfrag.f"
 ifx /nologo exfrag.obj /exe:exfrag-audit.exe
 ```
 
@@ -41,14 +41,14 @@ ifx /nologo exfrag.obj /exe:exfrag-audit.exe
 
 从当前 anahyp.in 前67行复制，仅把事件数改为1，提供最小定宽人工 coll/initangm。原样保留 `CNPCS=1,WRITE_GEMINI_INPUT=1` 等开关，在空案例目录中运行原始源码编译的程序。
 
-结果：exit 24，错误指向 **anahyp.for:710、unit 18、GEMINI_INPUT.dat**：
+结果：exit 24，错误指向 **anahyp.f:710、unit 18、GEMINI_INPUT.dat**：
 
 ```text
 forrtl: severe (24): end-of-file during read, unit 18,
 file .../GEMINI_INPUT.dat
 ```
 
-原因：478处用 unit18 打开新输出 GEMINI_INPUT.dat，710处 CNPCS 初始化又从相同单元读两行，第一次读即 EOF。该复现发生在物理事件分析前，因此不依赖人工核子构型的真实性。[写文件打开位置](../anahyp.for#L478)｜[冲突读取](../anahyp.for#L710)
+原因：478处用 unit18 打开新输出 GEMINI_INPUT.dat，710处 CNPCS 初始化又从相同单元读两行，第一次读即 EOF。该复现发生在物理事件分析前，因此不依赖人工核子构型的真实性。[写文件打开位置](../anahyp.f#L478)｜[冲突读取](../anahyp.f#L710)
 
 关闭 WRITE_GEMINI_INPUT 也不是完整解决：CNPCS 仍未获得专属且明确打开的输入单元，不能据此宣称 CNPCS 已可用。
 
@@ -71,7 +71,7 @@ file .../GEMINI_INPUT.dat
 | 1 | 0.00066273584 | 0.9561272 | 0.9999998 | 2 | 56 /26 | 1 |
 | 2 | 0.0000085322663 | 0.3651258 | 1.000000 | 2 | 56 /26 | 1 |
 
-`prepare_5li_5he` 将 SAVE 概率表原地归一化并累加成 CDF，第二次又把 CDF 当作原分布积分。实测中点从0.956降到0.365，确认不是仅末位舍入误差。主程序对每个符合条件的热簇调用该准备过程，所以该问题可能随热簇处理顺序积累。[准备函数](../GEMMOD.for#L7243)｜[主调用链](../anahyp.for#L2607)
+`prepare_5li_5he` 将 SAVE 概率表原地归一化并累加成 CDF，第二次又把 CDF 当作原分布积分。实测中点从0.956降到0.365，确认不是仅末位舍入误差。主程序对每个符合条件的热簇调用该准备过程，所以该问题可能随热簇处理顺序积累。[准备函数](../GEMMOD.f#L7243)｜[主调用链](../anahyp.f#L2607)
 
 零激发测试 exit0，只验证这一输入的接口终止与 A/Z 账面总和。n_frag包含被主程序滤掉的光子伪粒子，不能把2解释为两颗有质量碎片。
 
@@ -83,22 +83,22 @@ file .../GEMINI_INPUT.dat
 
 | 编号 / 证据 | 触发与源码位置 | 实际影响 | 建议的后续修复及验收 |
 |---|---|---|---|
-| E01 / P1 / 实测 | CNPCS与GEMINI_INPUT/ELEKED复用18；[anahyp:381](../anahyp.for#L381)、478、710 | 启动EOF、读错文件；CSSPECIES未清零、ele_count只有10而循环至30 | 为每项输入/输出定义独立单元和格式；独立/组合开关都测试，缺文件应明确报路径 |
-| E02 / P1 / 源码确定 | [anahyp:1792](../anahyp.for#L1792)累加簇量后，1815–1836只压缩IC | 成员标签与ICL/XJR/CL/CLK对应关系断裂，可遗漏旧高编号簇 | 先映射再重算，或统一重排全部簇字段；要求每粒子恰属一簇、ΣA/Z及总动量一致 |
-| E03 / P1 / 实测 | [GEMMOD:7243](../GEMMOD.for#L7243)重复积分SAVE表 | 轻核线形采样随调用次数漂移 | 保留原PDF、只准备一次或幂等重建；验证第一次与第100次CDF相同 |
-| E04 / P1 / 源码确定 | [anahyp:1997](../anahyp.for#L1997)多重簇跳转与角动量赋值 | ANGM_DEC=0时L、多个重簇时TOTANGM3不保证有效；可能传入旧簇自旋 | 每个事件/簇明确初始化，定义多重簇J分配；比较单簇、多簇、无簇和关闭角动量分支 |
-| E05 / P1 / 源码确定 | [anahyp:1815](../anahyp.for#L1815)及2670以后回填 | MG、max_frag和输出表范围并不统一；追加阶段可先越界再压缩 | 插入前检查容量或改可增长存储；大多重数输入开启bounds检查 |
-| E06 / P1 / 源码确定 | [anahyp:1225](../anahyp.for#L1225)普通读取不填idat，却用于分类 | 普通核子身份依赖未初始化状态；关闭READMESON仍有介子相关访问 | 给每条记录完整初始化，分离可选粒子数据；使用非零初始内存模式检查结果一致性 |
-| E07 / P2 / 源码确定 | [anahyp:919](../anahyp.for#L919)以后事件/时间片计数与跳转 | NNEVENT按时间片增加，NRMIN跳过可能未消费本事件剩余记录；多时间片输出分母不一致 | 将读取、选择、计数分开；2事件×3时间片及窗口跨界输入逐记录验收 |
-| E08 / P2 / 源码确定 | [anahyp:3991](../anahyp.for#L3991)及调用端 | 同一实际变量同时作为四矢量输入/输出，计算顺序可能覆盖仍需使用的分量 | 独立输入/输出局部变量，明确INTENT；静止、零boost、正反boost及质量壳不变量测试 |
-| E09 / P2 / 源码确定 | [anahyp:925](../anahyp.for#L925)的VPR1来源及2915后的谱统计 | 复合弹丸动量表达式缺少相应npr因子；CLKIN与boost后动量未同步，可能混参考系 | 明确lab/CM/母核系接口；p+A与A+A分开核验能量和角度 |
-| E10 / P2 / 源码确定 | ELEKED配置/输出，[anahyp:3340](../anahyp.for#L3340)附近 | 示例缺N列，最终仅NTH_RUN=1写unit21，已打开的OUTFILE+2未按契约写入 | 修订列契约与单元映射；单次/批次文件名和列数都验证 |
-| E11 / P2 / 源码确定 | TEELECS输入与ECHECK输出复用19，[anahyp:482](../anahyp.for#L482) | 两开关同时开启会切换文件关联；时间表还将k直接作300长度下标 | 单元独立，时间轴参数统一；dt≠0.5及k>300用例验证 |
-| E12 / P2 / 源码确定 | [anahyp:3153](../anahyp.for#L3153)后谱分箱 | 填充CEILING、查询NINT，小数角被整数截断，首末格及ΔΩ近似影响 | 明确bin边界、精确solid angle和积分守恒；0°/180°/非整数角/能量边界测试 |
-| E13 / P2 / 源码确定 | EXCCROSS第二段与DIFF门；[anahyp:3600](../anahyp.for#L3600) | 第二段标签mb实际为平均贡献能量；daughter通常不受DIFF门，样本混合 | 输出声明单位与分母；明确门控对象和保留概率是否属于模型或探测筛选 |
-| E14 / P2 / 源码确定 | π误差累计SNNYPPION使用NTRPION；[anahyp:1534](../anahyp.for#L1534) | 快度比误差二阶矩不对应同一观测量，并忽略分子分母协方差 | 用可手算事件样本核对一阶/二阶矩，按事件估计比值误差 |
-| E15 / P2 / 源码确定 | [GEMMOD:6602](../GEMMOD.for#L6602)HF初始惯量 | `r1=r0*a1(mode)*.33333333`为线性乘法，与常用核半径立方根形式不一致；影响轨道惯量与搜索起点 | 先确认模型原意，比较A=1/4/8时半径、惯量和宽度；不能在文档公式里静默改成幂运算 |
-| E16 / P2 / 源码确定 | [GEMMOD:4088](../GEMMOD.for#L4088) collective_enhancement首个RETURN | 看似存在的集体增强公式不可达 | 文档先标为未启用；若恢复需独立物理方案与回归，不只是删除RETURN |
+| E01 / P1 / 实测 | CNPCS与GEMINI_INPUT/ELEKED复用18；[anahyp:381](../anahyp.f#L381)、478、710 | 启动EOF、读错文件；CSSPECIES未清零、ele_count只有10而循环至30 | 为每项输入/输出定义独立单元和格式；独立/组合开关都测试，缺文件应明确报路径 |
+| E02 / P1 / 源码确定 | [anahyp:1792](../anahyp.f#L1792)累加簇量后，1815–1836只压缩IC | 成员标签与ICL/XJR/CL/CLK对应关系断裂，可遗漏旧高编号簇 | 先映射再重算，或统一重排全部簇字段；要求每粒子恰属一簇、ΣA/Z及总动量一致 |
+| E03 / P1 / 实测 | [GEMMOD:7243](../GEMMOD.f#L7243)重复积分SAVE表 | 轻核线形采样随调用次数漂移 | 保留原PDF、只准备一次或幂等重建；验证第一次与第100次CDF相同 |
+| E04 / P1 / 源码确定 | [anahyp:1997](../anahyp.f#L1997)多重簇跳转与角动量赋值 | ANGM_DEC=0时L、多个重簇时TOTANGM3不保证有效；可能传入旧簇自旋 | 每个事件/簇明确初始化，定义多重簇J分配；比较单簇、多簇、无簇和关闭角动量分支 |
+| E05 / P1 / 源码确定 | [anahyp:1815](../anahyp.f#L1815)及2670以后回填 | MG、max_frag和输出表范围并不统一；追加阶段可先越界再压缩 | 插入前检查容量或改可增长存储；大多重数输入开启bounds检查 |
+| E06 / P1 / 源码确定 | [anahyp:1225](../anahyp.f#L1225)普通读取不填idat，却用于分类 | 普通核子身份依赖未初始化状态；关闭READMESON仍有介子相关访问 | 给每条记录完整初始化，分离可选粒子数据；使用非零初始内存模式检查结果一致性 |
+| E07 / P2 / 源码确定 | [anahyp:919](../anahyp.f#L919)以后事件/时间片计数与跳转 | NNEVENT按时间片增加，NRMIN跳过可能未消费本事件剩余记录；多时间片输出分母不一致 | 将读取、选择、计数分开；2事件×3时间片及窗口跨界输入逐记录验收 |
+| E08 / P2 / 源码确定 | [anahyp:3991](../anahyp.f#L3991)及调用端 | 同一实际变量同时作为四矢量输入/输出，计算顺序可能覆盖仍需使用的分量 | 独立输入/输出局部变量，明确INTENT；静止、零boost、正反boost及质量壳不变量测试 |
+| E09 / P2 / 源码确定 | [anahyp:925](../anahyp.f#L925)的VPR1来源及2915后的谱统计 | 复合弹丸动量表达式缺少相应npr因子；CLKIN与boost后动量未同步，可能混参考系 | 明确lab/CM/母核系接口；p+A与A+A分开核验能量和角度 |
+| E10 / P2 / 源码确定 | ELEKED配置/输出，[anahyp:3340](../anahyp.f#L3340)附近 | 示例缺N列，最终仅NTH_RUN=1写unit21，已打开的OUTFILE+2未按契约写入 | 修订列契约与单元映射；单次/批次文件名和列数都验证 |
+| E11 / P2 / 源码确定 | TEELECS输入与ECHECK输出复用19，[anahyp:482](../anahyp.f#L482) | 两开关同时开启会切换文件关联；时间表还将k直接作300长度下标 | 单元独立，时间轴参数统一；dt≠0.5及k>300用例验证 |
+| E12 / P2 / 源码确定 | [anahyp:3153](../anahyp.f#L3153)后谱分箱 | 填充CEILING、查询NINT，小数角被整数截断，首末格及ΔΩ近似影响 | 明确bin边界、精确solid angle和积分守恒；0°/180°/非整数角/能量边界测试 |
+| E13 / P2 / 源码确定 | EXCCROSS第二段与DIFF门；[anahyp:3600](../anahyp.f#L3600) | 第二段标签mb实际为平均贡献能量；daughter通常不受DIFF门，样本混合 | 输出声明单位与分母；明确门控对象和保留概率是否属于模型或探测筛选 |
+| E14 / P2 / 源码确定 | π误差累计SNNYPPION使用NTRPION；[anahyp:1534](../anahyp.f#L1534) | 快度比误差二阶矩不对应同一观测量，并忽略分子分母协方差 | 用可手算事件样本核对一阶/二阶矩，按事件估计比值误差 |
+| E15 / P2 / 源码确定 | [GEMMOD:6602](../GEMMOD.f#L6602)HF初始惯量 | `r1=r0*a1(mode)*.33333333`为线性乘法，与常用核半径立方根形式不一致；影响轨道惯量与搜索起点 | 先确认模型原意，比较A=1/4/8时半径、惯量和宽度；不能在文档公式里静默改成幂运算 |
+| E16 / P2 / 源码确定 | [GEMMOD:4088](../GEMMOD.f#L4088) collective_enhancement首个RETURN | 看似存在的集体增强公式不可达 | 文档先标为未启用；若恢复需独立物理方案与回归，不只是删除RETURN |
 
 E02的可手算反例：旧成员 `IC=[1,1,1,3]`、旧簇质量 `ICL=[3,0,1]`，压缩成员得到 `[1,1,1,2]`、ICMAX=2，却仍取旧ICL前两槽 `[3,0]`。任何后续只遍历1..ICMAX的统计都会把第3槽的真实簇留在外面。这里明确给出的是数据结构反例，不伪装成物理事件拟合结果。
 

@@ -1,6 +1,6 @@
 # LQMD_GEMINI
 
-课题组使用的 **LQMD 输运 → MST 碎片识别 → GEMINI 统计退激 → 截面汇总与绘图** 代码。当前版本 **v0.1.0**，标准可复现入门流程为 Windows / Intel oneAPI Fortran。Linux 控制器已有独立测试，但本版本未认证 Linux 上完整物理链。
+课题组使用的 **LQMD 输运 → MST 碎片识别 → GEMINI 统计退激 → 截面汇总与绘图** 代码。当前版本 **v0.1.1**，标准可复现入门流程为 Windows / Intel oneAPI Fortran。Linux 控制器已有独立测试，但本版本未认证 Linux 上完整物理链。
 
 ## 从这里开始
 
@@ -14,7 +14,7 @@
 ```powershell
 git clone https://github.com/T-Choicy/LQMD_GEMINI.git
 cd LQMD_GEMINI
-git switch --detach v0.1.0
+git switch --detach v0.1.1
 powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/build_windows_controllers.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/run_example.ps1
 ```

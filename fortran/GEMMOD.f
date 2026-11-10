@@ -1,4 +1,4 @@
-      INCLUDE 'mass_select.for'
+      INCLUDE 'mass_select.f'
 !***** GEMINI
 !***** Nucl. Phys. A 483 (1988) 371
 !------------------------------begin:   MODULE gem_kind-----------------------------

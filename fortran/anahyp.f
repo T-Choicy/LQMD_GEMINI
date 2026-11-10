@@ -4071,7 +4071,7 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
       RETURN
       END
 C---------------------- ALSO IN LQMD ----------------
-      function sl(i)                                  ! Restored: evolt.for,subroutine width0 CSM
+      function sl(i)                                  ! Restored: evolt.f,subroutine width0 CSM
       
       COMMON /NMASS/npr, nta
       c1 = 0.08

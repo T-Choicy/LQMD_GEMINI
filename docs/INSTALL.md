@@ -12,7 +12,7 @@
 ./scripts/build_windows_controllers.ps1
 ```
 
-生成 `fortran/x64/Release/win_batch/` 内的 `LQMD.exe`、`exfrag.exe`、`ctrlL_win.exe`、`ctrlA_win.exe`。不要只编译 `anahyp.for` 或 `GEMMOD.for`：退激的入口是 `exfrag.for`，模块顺序由include保证。固定格式需要132列，构建器已设置相应选项。
+生成 `fortran/x64/Release/win_batch/` 内的 `LQMD.exe`、`exfrag.exe`、`ctrlL_win.exe`、`ctrlA_win.exe`。不要只编译 `anahyp.f` 或 `GEMMOD.f`：退激的入口是 `exfrag.f`，模块顺序由include保证。固定格式需要132列，构建器已设置相应选项。
 
 已有四个程序时构建器跳过；**修改源码或切换版本后必须重建**：
 

@@ -24,22 +24,22 @@ LQMD输运处理级联输出 (coll.out)
 ## 文件结构
 
 ```
-exfrag.for                         ← 主驱动 (2 行)
-  ├── INCLUDE 'GEMMOD.for'         ← 17 个 MODULE，GEMINI 基础设施 (10784 行)
-  └── INCLUDE 'anahyp_v3.0.for'    ← 主程序体 MAIN PROGRAM (4050 行)
+exfrag.f                         ← 主驱动 (2 行)
+  ├── INCLUDE 'GEMMOD.f'         ← 17 个 MODULE，GEMINI 基础设施 (10784 行)
+  └── INCLUDE 'anahyp_v3.0.f'    ← 主程序体 MAIN PROGRAM (4050 行)
 ```
 
 | 文件 | 行数 | 角色 |
 |------|------|------|
-| `exfrag.for` | 2 | 驱动文件，INCLUDE 其余两个 |
-| `GEMMOD.for` | 10784 | 模块库：类型定义、物理函数、GEMINI 衰变引擎 |
-| `anahyp.for` | 4050 | 主程序：输入→MST→GEMINI→统计输出的完整工作流 |
+| `exfrag.f` | 2 | 驱动文件，INCLUDE 其余两个 |
+| `GEMMOD.f` | 10784 | 模块库：类型定义、物理函数、GEMINI 衰变引擎 |
+| `anahyp.f` | 4050 | 主程序：输入→MST→GEMINI→统计输出的完整工作流 |
 
 ---
 
-## 一、GEMMOD.for — 模块速查表
+## 一、GEMMOD.f — 模块速查表
 
-GEMMOD.for 包含 17 个 MODULE，按功能分层：
+GEMMOD.f 包含 17 个 MODULE，按功能分层：
 
 | # | 模块 | 行号 | 功能 | 核心入口 |
 |---|------|------|------|----------|
@@ -65,7 +65,7 @@ GEMMOD.for 包含 17 个 MODULE，按功能分层：
 
 ---
 
-## 二、anaHyp_v3.0.for — 主程序流程
+## 二、anaHyp_v3.0.f — 主程序流程
 
 ### 总流程
 
@@ -201,7 +201,7 @@ DO L1 = 1, npar                     ← 事件循环
 ## 五、关键子程序调用链
 
 ```
-MAIN (anahyp_v3.0.for)
+MAIN (anahyp_v3.0.f)
   ├── gemsub:INPUT_ANA()           ← 读取 GEMINI 控制参数
   ├── [每事件, 每时间步]
   │     ├── [COLM] MST 聚类         ← 并合模型碎片识别

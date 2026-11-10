@@ -2,7 +2,7 @@
 
 Visual Studio 的编译、启动项目、工作目录及质量表运行步骤见 [Visual Studio 运行指南](docs/VisualStudio%E8%BF%90%E8%A1%8C%E6%8C%87%E5%8D%97.md)。
 
-`exfrag.for` 及其包含的 `anahyp.for`、`GEMMOD.for` 的完整说明见 [exfrag 工程代码说明书](docs/exfrag_%E5%B7%A5%E7%A8%8B%E4%BB%A3%E7%A0%81%E8%AF%B4%E6%98%8E%E4%B9%A6.md)，配套提供 [逐项参数与调参手册](docs/exfrag_%E5%8F%82%E6%95%B0%E6%89%8B%E5%86%8C.md)、[123 个过程的源码接口索引](docs/exfrag_%E6%BA%90%E7%A0%81%E7%B4%A2%E5%BC%95.md)和[实测验证与已知问题](docs/exfrag_%E9%AA%8C%E8%AF%81%E4%B8%8E%E5%B7%B2%E7%9F%A5%E9%97%AE%E9%A2%98.md)。该组文档核对日期为 2026-09-05。
+`exfrag.f` 及其包含的 `anahyp.f`、`GEMMOD.f` 的完整说明见 [exfrag 工程代码说明书](docs/exfrag_%E5%B7%A5%E7%A8%8B%E4%BB%A3%E7%A0%81%E8%AF%B4%E6%98%8E%E4%B9%A6.md)，配套提供 [逐项参数与调参手册](docs/exfrag_%E5%8F%82%E6%95%B0%E6%89%8B%E5%86%8C.md)、[123 个过程的源码接口索引](docs/exfrag_%E6%BA%90%E7%A0%81%E7%B4%A2%E5%BC%95.md)和[实测验证与已知问题](docs/exfrag_%E9%AA%8C%E8%AF%81%E4%B8%8E%E5%B7%B2%E7%9F%A5%E9%97%AE%E9%A2%98.md)。该组文档核对日期为 2026-09-05。
 
 公式学习建议先看[对照Charity 2008的公式精讲](docs/exfrag_%E5%85%AC%E5%BC%8F%E7%B2%BE%E8%AE%B2_%E5%AF%B9%E7%85%A7Charity2008.md)，配合[交互教学计算器](docs/exfrag_%E5%85%AC%E5%BC%8F%E4%BA%A4%E4%BA%92%E6%95%99%E5%AD%A6.html)。补充内容包含手算例子、文献式号/PDF页码与源码映射，以及旧版GEMINI和GEMINI++的差别。
 

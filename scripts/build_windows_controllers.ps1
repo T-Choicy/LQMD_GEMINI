@@ -56,9 +56,9 @@ if ($SetVars) {
 New-Item -ItemType Directory -Path $taskTemp -Force | Out-Null
 $targets = @(
     @{ Name = 'ctrlL_win'; Source = 'ctrlL_win.f' },
-    @{ Name = 'ctrlA_win'; Source = 'ctrlA_win.for' },
-    @{ Name = 'LQMD'; Source = 'LQMD.for' },
-    @{ Name = 'exfrag'; Source = 'exfrag.for' }
+    @{ Name = 'ctrlA_win'; Source = 'ctrlA_win.f' },
+    @{ Name = 'LQMD'; Source = 'LQMD.f' },
+    @{ Name = 'exfrag'; Source = 'exfrag.f' }
 )
 $targetFiles = foreach ($target in $targets) {
     Join-Path $outputRoot ($target.Name + '.exe')

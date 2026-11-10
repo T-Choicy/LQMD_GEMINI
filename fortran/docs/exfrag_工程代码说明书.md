@@ -1,6 +1,6 @@
 # exfrag 工程代码说明书
 
-版本：2026-09-05；对象：[exfrag.for](../exfrag.for)、[anahyp.for](../anahyp.for)、[GEMMOD.for](../GEMMOD.for)。本文解释当前源码，不以历史注释代替实现，也不代表已经完成物理模型标定。
+版本：2026-09-05；对象：[exfrag.f](../exfrag.f)、[anahyp.f](../anahyp.f)、[GEMMOD.f](../GEMMOD.f)。本文解释当前源码，不以历史注释代替实现，也不代表已经完成物理模型标定。
 
 配套查阅：[参数手册](exfrag_%E5%8F%82%E6%95%B0%E6%89%8B%E5%86%8C.md)｜[全部过程与接口索引](exfrag_%E6%BA%90%E7%A0%81%E7%B4%A2%E5%BC%95.md)｜[验证记录与已知问题](exfrag_%E9%AA%8C%E8%AF%81%E4%B8%8E%E5%B7%B2%E7%9F%A5%E9%97%AE%E9%A2%98.md)。
 
@@ -13,13 +13,13 @@
 入口的全部源码是：
 
 ```fortran
-      INCLUDE 'GEMMOD.for'
-      INCLUDE 'anahyp.for'
+      INCLUDE 'GEMMOD.f'
+      INCLUDE 'anahyp.f'
 ```
 
-因此，用户所说的“两个程序”在工程上分别是 **17 个 MODULE 组成的库**和**一个无名主程序及其 6 个辅助过程**。文本包含后形成一个编译单元、一个可执行程序。不要同时把 `exfrag.for`、`GEMMOD.for`、`anahyp.for` 当作三个独立源文件一起链接，否则会重复定义；也不要把另一个主程序 `LQMDini.for` 加进同一目标。
+因此，用户所说的“两个程序”在工程上分别是 **17 个 MODULE 组成的库**和**一个无名主程序及其 6 个辅助过程**。文本包含后形成一个编译单元、一个可执行程序。不要同时把 `exfrag.f`、`GEMMOD.f`、`anahyp.f` 当作三个独立源文件一起链接，否则会重复定义；也不要把另一个主程序 `LQMDini.f` 加进同一目标。
 
-当前文件长度为：`exfrag.for` 2 行、`GEMMOD.for` 10786 行、`anahyp.for` 4009 行。附录列出 123 个过程，其中 GEMMOD 117 个、anahyp 6 个。所谓“模块”既可能指真正的 Fortran MODULE，也可能指 anahyp 中的逻辑区段；本文明确区分两者。
+当前文件长度为：`exfrag.f` 2 行、`GEMMOD.f` 10786 行、`anahyp.f` 4009 行。附录列出 123 个过程，其中 GEMMOD 117 个、anahyp 6 个。所谓“模块”既可能指真正的 Fortran MODULE，也可能指 anahyp 中的逻辑区段；本文明确区分两者。
 
 ```text
 LQMD 初始化与输运（本手册只核对数据接口）
@@ -54,7 +54,7 @@ GEMINI 的顺序二体衰变背景可参见 Charity 收录于 IAEA 裂变/散裂
 
 HOT 是 GEMINI 调用之前的并合簇。COLD 是调用之后还保留在碎片列表中的核素，包括：GEMINI 末端产物、低电荷而直接按基态处理的轻簇，以及因激发能、电荷或动量门槛而未退激的原始簇。因此 **COLD 文件并不保证其中每个对象都经过统计退激**。关闭 GEMINI 时，HOT/COLD 的差别也不再代表物理退激。
 
-GEMINI 遇到无可用粒子通道、或 γ 宽度占总宽度至少 99% 时，会把剩余 `Ex` 存入 `exx`，把 `Ex` 设为 0 后返回。不是逐个追踪所有低能 γ 到严格基态；主程序还会过滤 `Z<0` 的光子伪粒子。[停止逻辑](../GEMMOD.for#L8166)
+GEMINI 遇到无可用粒子通道、或 γ 宽度占总宽度至少 99% 时，会把剩余 `Ex` 存入 `exx`，把 `Ex` 设为 0 后返回。不是逐个追踪所有低能 γ 到严格基态；主程序还会过滤 `Z<0` 的光子伪粒子。[停止逻辑](../GEMMOD.f#L8166)
 
 ## 2. 新使用者的阅读路线
 
@@ -74,16 +74,16 @@ GEMINI 遇到无可用粒子通道、或 γ 宽度占总宽度至少 99% 时，�
 
 ### 3.1 已核实的构建关系
 
-当前 [Console1.vfproj](../Console1.vfproj) 的 Source Files 只有 `LQMDini.for`；已有 `Console1.exe` 不能当作 exfrag 使用。历史 BuildLog 也显示其链接的是 LQMDini 对象。
+当前 [Console1.vfproj](../Console1.vfproj) 的 Source Files 只有 `LQMDini.f`；已有 `Console1.exe` 不能当作 exfrag 使用。历史 BuildLog 也显示其链接的是 LQMDini 对象。
 
 本次用本机 Intel Fortran 2025.3.2 对原始 exfrag 完成独立编译和链接。先打开已初始化 oneAPI 与 Visual Studio x64 环境的命令提示符，再在独立构建目录执行：
 
 ```bat
-ifx /nologo /c /fixed /extend-source:132 /warn:all /check:all /traceback /Od /I"D:\Spallation\fortran" "D:\Spallation\fortran\exfrag.for"
+ifx /nologo /c /fixed /extend-source:132 /warn:all /check:all /traceback /Od /I"D:\Spallation\fortran" "D:\Spallation\fortran\exfrag.f"
 ifx /nologo exfrag.obj /exe:exfrag.exe
 ```
 
-第一行生成 `.obj/.mod`，第二行生成可执行文件。构建目录应可写，输出不应混入源目录。`/fixed` 指定固定格式，`/extend-source:132` 指定扩展有效列；不要把 `.for` 随意当作自由格式。`/check:all` 和 `/traceback` 适合诊断，不是物理正确性的证明。源码包含 Intel 扩展，例如整数逻辑表达式、实数下标及旧式 PAUSE，GNU 编译器不是已经验证的等价替代。Intel 官方文档明确区分编译与链接，并要求模块定义先于引用。[Intel 编译调用说明](https://www.intel.com/content/www/us/en/docs/fortran-compiler/developer-guide-reference/2023-1/invoke-the-compiler.html)
+第一行生成 `.obj/.mod`，第二行生成可执行文件。构建目录应可写，输出不应混入源目录。`/fixed` 指定固定格式，`/extend-source:132` 指定扩展有效列；不要把 `.f` 随意当作自由格式。`/check:all` 和 `/traceback` 适合诊断，不是物理正确性的证明。源码包含 Intel 扩展，例如整数逻辑表达式、实数下标及旧式 PAUSE，GNU 编译器不是已经验证的等价替代。Intel 官方文档明确区分编译与链接，并要求模块定义先于引用。[Intel 编译调用说明](https://www.intel.com/content/www/us/en/docs/fortran-compiler/developer-guide-reference/2023-1/invoke-the-compiler.html)
 
 直接从普通 PowerShell 调用 ifx，编译可以成功而链接报 `could not find 'link'`。需要让环境初始化与编译链接处在同一进程环境中。仓库根目录的 `compile_fortran.ps1` 在子 `cmd` 中运行 setvars，环境不会自动回传到父 PowerShell；不能把打印“初始化成功”当作链接环境已准备好。
 
@@ -132,7 +132,7 @@ Set-Location -LiteralPath 'D:\Spallation\tmp\my-exfrag-case'
 
 ### 3.4 coll.dat 的精确格式
 
-[读取位置](../anahyp.for#L920)与[粒子记录位置](../anahyp.for#L1225)：
+[读取位置](../anahyp.f#L920)与[粒子记录位置](../anahyp.f#L1225)：
 
 ```fortran
 965  format(/1x,I4,5(F8.3,1x))
@@ -247,7 +247,7 @@ Fortran 不区分大小写，`NEXC` 因 I–N 隐式整型规则是整数；`EXC
 
 ### 5.2 并合不是只有一个距离判据
 
-[主路径](../anahyp.for#L1620)内部设置 `MST=1`，并不是从 anahyp.in 读取。对候选核子 i、j，先要求：
+[主路径](../anahyp.f#L1620)内部设置 `MST=1`，并不是从 anahyp.in 读取。对候选核子 i、j，先要求：
 
 \[
 |\mathbf r_i-\mathbf r_j|^2\le r_{r0}^{\,2},\qquad
@@ -299,7 +299,7 @@ N_c=A_c-Z_c.
 
 本节所有能量和势项先以 GeV 计算，最后转 MeV。令 C 为一个簇，`q_i=LB(i)`，`s_i=isy(i)`。通常核子同位旋取 ±1，但应与输运文件编码核对；若输入改用 ±1/2，对称项会缩小四倍。
 
-波包宽度来自 [sl](../anahyp.for#L3926)：
+波包宽度来自 [sl](../anahyp.f#L3926)：
 
 \[
 L_i=\left(0.08 A_{\rm origin}^{1/3}+0.92\right)^2\;\mathrm{fm}^2,
@@ -328,7 +328,7 @@ f_i=\sum_{j\in C,j\ne i}t_{ij},\qquad
 f_i^{(p)}=\rho_0\sum_{j\in C,j\ne i}q_iq_jt_{ij}.
 \]
 
-`fr=f_i`、`frp=f_i^(p)`；只有同簇核子对贡献能量。前面的“高密度核子计数”使用 `L_i+L_j` 且包括自项，中心密度用 `2L_i`；不能将这些诊断密度与这里的 `fr` 直接混用。[能量重叠核](../anahyp.for#L2151)
+`fr=f_i`、`frp=f_i^(p)`；只有同簇核子对贡献能量。前面的“高密度核子计数”使用 `L_i+L_j` 且包括自项，中心密度用 `2L_i`；不能将这些诊断密度与这里的 `fr` 直接混用。[能量重叠核](../anahyp.f#L2151)
 
 ### 6.2 内部动能与 Skyrme 项
 
@@ -338,7 +338,7 @@ U_2=\frac{\alpha}{2}\sum_i f_i,\quad
 U_3=\frac{\beta}{1+\gamma}\sum_i f_i^\gamma.
 \]
 
-变量映射为 `tkin,utwo,uthr`，`beta=batat`，`gamma=gmmat`。[对应源码](../anahyp.for#L2197)
+变量映射为 `tkin,utwo,uthr`，`beta=batat`，`gamma=gmmat`。[对应源码](../anahyp.f#L2197)
 
 注意这里内部动能是非相对论表达式，而平动动能另用平方根公式。alpha<0 通常提供吸引，beta>0 提供随密度增长的排斥；它们与 gamma 是一个成套参数化，不能把三者独立调整而仍声称保持原输运模型的 EOS。
 
@@ -365,7 +365,7 @@ U_{\rm ssym}=2\,g_{\rm sym}\sum_{i<j\in C}s_is_jD_{ij}t_{ij},
 U_\tau=g_{\tau11}\sum_{i\in C} f_i^{\eta11}.
 \]
 
-对应 `ugrd,usym,ussr,utau`。代码对同一个簇槽位分别通过 IS1、IS2 加半项，合起来得到上式。`gsur/gsym` 因 D 带 fm⁻²，量纲为 GeV·fm²；`symm/gtau11` 为 GeV。不要把 `gsym` 与 `symm` 混为同一对称能系数。[逐对势项](../anahyp.for#L2172)
+对应 `ugrd,usym,ussr,utau`。代码对同一个簇槽位分别通过 IS1、IS2 加半项，合起来得到上式。`gsur/gsym` 因 D 带 fm⁻²，量纲为 GeV·fm²；`symm/gtau11` 为 GeV。不要把 `gsym` 与 `symm` 混为同一对称能系数。[逐对势项](../anahyp.f#L2172)
 
 ### 6.4 Coulomb 直接项和交换项
 
@@ -394,7 +394,7 @@ c_{\rm ex}=-\frac34(0.00144)\left(\frac3\pi\right)^{1/3}.
 -1.453152027t^4+1.061405429t^5).
 \]
 
-此处调用 x≥0。`xexp` 则把指数参数夹到 [-87,87]，是避免溢出的数值保护，并非物理截断。[scou/erf/xexp](../anahyp.for#L3941)
+此处调用 x≥0。`xexp` 则把指数参数夹到 [-87,87]，是避免溢出的数值保护，并非物理截断。[scou/erf/xexp](../anahyp.f#L3941)
 
 ### 6.5 动量相关项 MDI
 
@@ -435,7 +435,7 @@ E^*=\max(0,1000E_{\rm int}+B).
 
 缺失质量表项的 `XBIN` 被初始化为 0，不报错即可生成错误 B。修改质量库前应分别核对 QMD 侧 `massfrdm.dat` 和 GEMINI 侧 `tbl/gdat`，两套库不自动保持一致。
 
-完整 E_int 不含独立的 Yukawa、Pauli 或额外壳修正能项；`OUTENE/TESTEX/PRINTDEC` 中若仍打印 `uyuk11/upaul11/Esh11`，不能据此认为这些项已实际计算。[总和与截断](../anahyp.for#L2206)
+完整 E_int 不含独立的 Yukawa、Pauli 或额外壳修正能项；`OUTENE/TESTEX/PRINTDEC` 中若仍打印 `uyuk11/upaul11/Esh11`，不能据此认为这些项已实际计算。[总和与截断](../anahyp.f#L2206)
 
 ### 6.7 平动动能与 ECHECK 的解释
 
@@ -448,7 +448,7 @@ K_C=\sqrt{M_C^2+|\mathbf P_C|^2}-M_C.
 
 这里 `m_p=0.938271998`、`m_n=0.939565330` GeV，`CLKIN` 仍为 GeV。
 
-ECHECK 的 before 是被筛选核子的相对论自由动能和；after 是各簇 `sqrt((M_free+AENE)^2+P²)-M_free` 的和，已经包含内部能量。它们不采用同一完整哈密顿量，所以 `DeltaE≠0` 不是独立的严格能量不守恒证明，`DeltaE≈0` 也不是整个输运加退激链守恒的验收。ECHECK 的代码仅检查并合与能量重建之前/之后，不检查 GEMINI 全级联终态。[诊断公式](../anahyp.for#L2381)
+ECHECK 的 before 是被筛选核子的相对论自由动能和；after 是各簇 `sqrt((M_free+AENE)^2+P²)-M_free` 的和，已经包含内部能量。它们不采用同一完整哈密顿量，所以 `DeltaE≠0` 不是独立的严格能量不守恒证明，`DeltaE≈0` 也不是整个输运加退激链守恒的验收。ECHECK 的代码仅检查并合与能量重建之前/之后，不检查 GEMINI 全级联终态。[诊断公式](../anahyp.f#L2381)
 
 ## 7. 角动量与 GEMINI 接口
 
@@ -472,7 +472,7 @@ J_{\rm eff}=\frac{\sqrt{1+4|\mathbf J_{\rm remain}|^2}-1}{2}.
 
 `ANGM_LIGHT` 比较的是 `ICL`，即**质量数 A**，不是注释所写的电荷 Z。多于一个 `A>ANGM_LIGHT` 的簇时跳过本次计算；代码没有先清空 TOTANGM3。初始向量本身又被逐时间片原地减去轨道项，第二个时间片未恢复原初始值。`ANGM_DEC=0` 时，随后传给 `fusion` 的 L 也没有显式赋值。这些情况不能当作“自动设置 J=0”。
 
-通过门槛的重簇使用 `L=int(TOTANGM3)`；小簇设 L=0。这个接口只传入自旋大小，`fusion` 另设固定自旋方向；并未传递主程序计算的完整 J 向量。[角动量计算](../anahyp.for#L1996)｜[L 赋值](../anahyp.for#L2634)
+通过门槛的重簇使用 `L=int(TOTANGM3)`；小簇设 L=0。这个接口只传入自旋大小，`fusion` 另设固定自旋方向；并未传递主程序计算的完整 J 向量。[角动量计算](../anahyp.f#L1996)｜[L 赋值](../anahyp.f#L2634)
 
 ### 7.2 一个热簇真正进入退激的全部条件
 
@@ -485,7 +485,7 @@ J_{\rm eff}=\frac{\sqrt{1+4|\mathbf J_{\rm remain}|^2}-1}{2}.
 5. 若 NEXC>DECNEXC2，将 NEXC 截为 DECNEXC2 的整型值。
 6. `Z<=DECIZ`。
 
-因此 `DECNEXC2` 是**裁剪上限**，不是把超限碎片拒绝，也不是每核子上限。E*=2.9 MeV 先变成整数 2，当门槛为 2.0 时不会进入；E*=3.0 才通过。每个通过筛选的热簇只调用一次 `event`，不是 `R_num=100` 次。[门槛与输入转换](../anahyp.for#L2519)
+因此 `DECNEXC2` 是**裁剪上限**，不是把超限碎片拒绝，也不是每核子上限。E*=2.9 MeV 先变成整数 2，当门槛为 2.0 时不会进入；E*=3.0 才通过。每个通过筛选的热簇只调用一次 `event`，不是 `R_num=100` 次。[门槛与输入转换](../anahyp.f#L2519)
 
 ### 7.3 调用顺序与隐式状态
 
@@ -536,11 +536,11 @@ call DE_ARRAY_angle
 | `spin%theta/phi` | 自旋方向 | 度 |
 | `vel%v/theta/phi` | 速度大小和方向 | cm/ns、度、度 |
 
-重要常数为 `r0=1.16 fm`、`sep=2 fm`、`r0ld=1.2249 fm`、`l_max_quantum=50`。这几个半径参数属于 GEMINI 几何，不是并合 rr0。[类型定义](../GEMMOD.for#L4)
+重要常数为 `r0=1.16 fm`、`sep=2 fm`、`r0ld=1.2249 fm`、`l_max_quantum=50`。这几个半径参数属于 GEMINI 几何，不是并合 rr0。[类型定义](../GEMMOD.f#L4)
 
 ### 8.2 trig：角度制函数
 
-提供 SIND/COSD/TAND 及反函数的 r4/r8 重载：`SIND(θ)=sin(πθ/180)`，逆函数把弧度乘 180/π。`ATAN2D(y,x)` 用两个分量保留象限。模块没有拟合参数；接口名里的 D 表示 degree，不能当作 double precision。主程序的 `ACOS` 与这些角度制函数同时存在，是角度单位错误的重要来源。[trig](../GEMMOD.for#L54)
+提供 SIND/COSD/TAND 及反函数的 r4/r8 重载：`SIND(θ)=sin(πθ/180)`，逆函数把弧度乘 180/π。`ATAN2D(y,x)` 用两个分量保留象限。模块没有拟合参数；接口名里的 D 表示 degree，不能当作 double precision。主程序的 `ACOS` 与这些角度制函数同时存在，是角度单位错误的重要来源。[trig](../GEMMOD.f#L54)
 
 ### 8.3 sierk_stuff：有限程旋转核势垒拟合
 
@@ -562,23 +562,23 @@ J_{\max}=\sum_{k=1}^{7}\sum_{i=1}^{5}emxcof_{ki}P_{k-1}(z)P_{i-1}(a),
 
 J<J20 段用 `B_f(J)=B_f(0)(1+qa J²+qb J³)`；较高 J 用 J/Jmax 的多项式，负势垒及 J>Jmax 置 0。Yrast 与鞍点表面积同样是 Z、A、J 的多项式展开；本模块前面大量 DATA 常数是拟合表，不是建议日常逐个调整的自由参数。
 
-本地边界检查为 `19<=Z<=111`、`1.2Z+0.01Z²<=A<=5.8Z-0.024Z²`；另在非零 J 时对 Z>102 返回哨兵值。界外不能把 999 或 -1 当物理势垒/角动量。模型理论来源是有限程表面能和弥散 Coulomb 修正的宏观旋转核模型。[Sierk 原始论文](https://journals.aps.org/prc/abstract/10.1103/PhysRevC.33.2039)｜[本地入口](../GEMMOD.for#L638)
+本地边界检查为 `19<=Z<=111`、`1.2Z+0.01Z²<=A<=5.8Z-0.024Z²`；另在非零 J 时对 Z>102 返回哨兵值。界外不能把 999 或 -1 当物理势垒/角动量。模型理论来源是有限程表面能和弥散 Coulomb 修正的宏观旋转核模型。[Sierk 原始论文](https://journals.aps.org/prc/abstract/10.1103/PhysRevC.33.2039)｜[本地入口](../GEMMOD.f#L638)
 
 ### 8.4 sortsub：历史 GEMINI 事件文件接口
 
-负责文件头、事件读取、元素名与排序入口；没有新的核物理公式。`get_event` 按 GEMINI 自己的事件文件格式重建事件，与 `coll.dat` 完全不同。`open_event_file/start_sort` 包含交互式文件选择流程。当前 anahyp 并未调用这些入口；不要寻找一个自动产生的 `.evt` 再交给 exfrag，当前接口通过 `frag` 内存数组返回产物。[sortsub](../GEMMOD.for#L1086)
+负责文件头、事件读取、元素名与排序入口；没有新的核物理公式。`get_event` 按 GEMINI 自己的事件文件格式重建事件，与 `coll.dat` 完全不同。`open_event_file/start_sort` 包含交互式文件选择流程。当前 anahyp 并未调用这些入口；不要寻找一个自动产生的 `.evt` 再交给 exfrag，当前接口通过 `frag` 内存数组返回产物。[sortsub](../GEMMOD.f#L1086)
 
 ### 8.5 spectra：库内的能谱直方图
 
 `hist_ek(ek,de,mode,yield)` 将中心 ek、宽度 de 的小区间分摊到能谱格点；`hist_normalize(gamma_total,j)` 将当前谱除以总宽度后累加到自旋 j 对应的数组切片，没有在此额外乘自旋权重。`hist_write/read/print` 处理 `.spe` 数据。期望的分摊为 `H_b += yield × 重叠长度/de`；当前源码把 `r_min/r_max` 先除以 `deltaE`，边缘格又混用格号与能量宽度，不能保证任意 `deltaE` 下等价于标准重叠积分。同一格分支直接加 yield，且没有先检查格号上界。若启用此历史功能，需要补积分守恒与边界测试。
 
-当前 `ek_loop` 的 `hist_ek`、`decay_widths` 的 `hist_zero/hist_normalize` 调用被注释，所以主程序的 DDCSS 不是从这个模块直接输出。主程序有自己的 `cross_count/LNKEB`。[spectra](../GEMMOD.for#L1523)
+当前 `ek_loop` 的 `hist_ek`、`decay_widths` 的 `hist_zero/hist_normalize` 调用被注释，所以主程序的 DDCSS 不是从这个模块直接输出。主程序有自己的 `cross_count/LNKEB`。[spectra](../GEMMOD.f#L1523)
 
 ### 8.6 light_stuff：轻核通道与已知能级表
 
 保存 `Z1,A1,S,DEF,width,limit,level_no,mode_gs,exotic` 等并行表，每一个 mode 不一定对应一个不同核素，也可能是同一核素的不同能级。范围 -2:51，负/零 mode 包含多中子占位；`prepare_Hauser_Feshbach` 实际从 mode=1 扫描，不能说全部声明通道都自动启用。
 
-候选通道要求 `Z1(mode)<Z_imf_min` 且 `exotic(mode)<=exotic_index`。粒子自旋用显式耦合，或在关闭 `ssum` 时乘 `(2s+1)` 简并因子。`DEF` 是质量过剩/能级相关能量，参与分离能 `Ba=M_d+DEF-M_parent+ex1`。`write_mult` 写概率累计多重数；当前主程序虽更新 mult0，不调用最终输出入口。[通道表](../GEMMOD.for#L1676)
+候选通道要求 `Z1(mode)<Z_imf_min` 且 `exotic(mode)<=exotic_index`。粒子自旋用显式耦合，或在关闭 `ssum` 时乘 `(2s+1)` 简并因子。`DEF` 是质量过剩/能级相关能量，参与分离能 `Ba=M_d+DEF-M_parent+ex1`。`write_mult` 写概率累计多重数；当前主程序虽更新 mult0，不调用最终输出入口。[通道表](../GEMMOD.f#L1676)
 
 ### 8.7 mass_stuff：质量与配对修正
 
@@ -625,9 +625,9 @@ E_{a0}=4.4,\quad E_{ca}=0.212\frac{Z^2-N^2}{A},\quad
 E_p=12/\sqrt A-10/A.
 \]
 
-这里 `r0=1.16,rp=0.8,e²=1.4399764,mnΔ=8.071431,mHΔ=7.289034`；末尾 Ep 在 massfr 中无奇偶 IF，虽然注释写 odd-odd，实际作为统一基准项相加。其它路径另用 get_pairing 进行奇偶修正。不要给 `massfr` 的返回值再次加 A×938 MeV 后再当质量过剩使用。[massfr](../GEMMOD.for#L2376)
+这里 `r0=1.16,rp=0.8,e²=1.4399764,mnΔ=8.071431,mHΔ=7.289034`；末尾 Ep 在 massfr 中无奇偶 IF，虽然注释写 odd-odd，实际作为统一基准项相加。其它路径另用 get_pairing 进行奇偶修正。不要给 `massfr` 的返回值再次加 A×938 MeV 后再当质量过剩使用。[massfr](../GEMMOD.f#L2376)
 
-`get_pairing` 的配对基准为：偶偶=0，奇 Z 偶 N 为 `4.8/Z^(1/3)`，偶 Z 奇 N 为 `4.8/N^(1/3)`，奇奇为两者之和再减 `6.6/A^(2/3)`；若奇奇且 N=Z 还加 `30/A`。这不是最常见的 ±12/√A 教科书记号，不应擅自替换。[配对修正](../GEMMOD.for#L2539)
+`get_pairing` 的配对基准为：偶偶=0，奇 Z 偶 N 为 `4.8/Z^(1/3)`，偶 Z 奇 N 为 `4.8/N^(1/3)`，奇奇为两者之和再减 `6.6/A^(2/3)`；若奇奇且 N=Z 还加 `30/A`。这不是最常见的 ±12/√A 教科书记号，不应擅自替换。[配对修正](../GEMMOD.f#L2539)
 
 `droplet_mass` 是另一组液滴参数化，当前主要 getmass 回退使用 massfr。两者不要同时叠加。该备用过程的公式为：
 
@@ -647,7 +647,7 @@ E_c=c_1Z^2/A^{1/3}-c_2Z^2A^{1/3}-c_3Z^2/A
 -c_4Z/2^{1/3}-c_5Z^2.
 \]
 
-`a1=15.96,a2=20.69,J=36.8,Q=17,K=240,L=100,c1=0.73219,c2=0.00016302,c3=1.28846,c4=0.55911,c5=0.00049274`；此处 J 是对称能系数，不是自旋。再加 Wigner 项：N=Z且N为奇数时30/A，其余30|N−Z|/A；最后加核子质量过剩 `8.07169N+7.28922Z`。该过程中的额外奇偶项和原子结合能扣除被注释，不能补入当前公式。[droplet_mass](../GEMMOD.for#L2480)
+`a1=15.96,a2=20.69,J=36.8,Q=17,K=240,L=100,c1=0.73219,c2=0.00016302,c3=1.28846,c4=0.55911,c5=0.00049274`；此处 J 是对称能系数，不是自旋。再加 Wigner 项：N=Z且N为奇数时30/A，其余30|N−Z|/A；最后加核子质量过剩 `8.07169N+7.28922Z`。该过程中的额外奇偶项和原子结合能扣除被注释，不能补入当前公式。[droplet_mass](../GEMMOD.f#L2480)
 
 ### 8.8 functs：概率、角动量代数与能级密度参数 a
 
@@ -677,7 +677,7 @@ a=\frac A{aden\_0}\times aa\_scale\quad(aden\_type=0),\quad
 S=2\sqrt{aU_2},\quad T\simeq\sqrt{U_2/a}.
 \]
 
-U≤0 时熵返回 0。`aa_scale` 是每次调用的实参，常为 1；`para%a_scale` 只在特定裂变路径传入。所有 22 种 aden_type 的代码公式列在参数手册，不能把 aden_0 在所有模式中都解释成 A/a。[get_little_a](../GEMMOD.for#L2873)
+U≤0 时熵返回 0。`aa_scale` 是每次调用的实参，常为 1；`para%a_scale` 只在特定裂变路径传入。所有 22 种 aden_type 的代码公式列在参数手册，不能把 aden_0 在所有模式中都解释成 A/a。[get_little_a](../GEMMOD.f#L2873)
 
 `ran_j` 在允许区间均匀试抽 x，然后按 `exp(2 sqrt(a(U−ac*x²/2))−rua)` 接受，用于热转动模态。`zbeta(A)=A/(1.98+0.0155 A^(2/3))` 是某些 a 模型的参考稳定线。
 
@@ -693,7 +693,7 @@ q_l(E)=c_1E+c_2+c_3/E,\qquad T_l(E)=\frac1{1+e^{q_l(E)}}.
 
 `prepare_tl` 的 c2、c3 是 `(l+1)` 的二次多项式。`get_tll` 在非物理驻点附近改用 100 或驻点值，指数>65 返回 T=0。mode≤1 的能量先加 1，某些质子/α mode 还有随 A2−A_EAL 的能标修正。
 
-变形/膨胀模式以不同半径表做二次插值，再按表面积或 `|Y_lm|²` 权重平均 T；`ratio` 为轴比，`expand` 为半径放大率。`look_up` 缓存不能跨不同几何/残余核不清空地复用。l 上限 50 与角分布表共同约束；改上限必须同步重建缓存和数组。[get_tl](../GEMMOD.for#L3124)｜[get_tll](../GEMMOD.for#L3756)
+变形/膨胀模式以不同半径表做二次插值，再按表面积或 `|Y_lm|²` 权重平均 T；`ratio` 为轴比，`expand` 为半径放大率。`look_up` 缓存不能跨不同几何/残余核不清空地复用。l 上限 50 与角分布表共同约束；改上限必须同步重建缓存和数组。[get_tl](../GEMMOD.f#L3124)｜[get_tll](../GEMMOD.f#L3756)
 
 ### 8.10 stat_mod：缩放能级密度与采样存储
 
@@ -710,7 +710,7 @@ T=\sqrt{U/a},\qquad \sigma^2=\mathcal I T/40.848,
 
 先以 `ee=S_parent,pe=1` 计算母核密度，再设 `pe=2π×母核缩放密度`，以后用差熵避免指数过大。不要把 `get_level_density` 的结果单独拿去当绝对能级密度而忽略 `pe/ee`。
 
-`collective_enhancement` 在第一条有效执行语句处就 RETURN，下方 beta2/费米淡出公式没有生效。另一个名叫 `collective` 的标量在对称裂变宽度中生效，二者不是同一个开关。[stat_mod](../GEMMOD.for#L3981)
+`collective_enhancement` 在第一条有效执行语句处就 RETURN，下方 beta2/费米淡出公式没有生效。另一个名叫 `collective` 的标量在对称裂变宽度中生效，二者不是同一个开关。[stat_mod](../GEMMOD.f#L3981)
 
 ### 8.11 yrast_mod：旋转基线、非对称鞍点与形变
 
@@ -741,7 +741,7 @@ E_{sad}=sad\_array(\min(A_1,A_2))+M_{ld,1}+M_{ld,2}
 -(\mathcal I_1+\mathcal I_2+\mathcal I_{orb})^{-1}\right]^{-1}.
 \]
 
-`sad_array` 已扣除了参考质量和 Coulomb 项，不能再把 E_sad 简化成 B_f+Q 后重复加质量。先 `read_sad` 分配系数，再 `sadfit`，再 `saddle`；最后 `de_c` 释放系数。[yrast](../GEMMOD.for#L4544)｜[saddle](../GEMMOD.for#L4662)
+`sad_array` 已扣除了参考质量和 Coulomb 项，不能再把 E_sad 简化成 B_f+Q 后重复加质量。先 `read_sad` 分配系数，再 `sadfit`，再 `saddle`；最后 `de_c` 释放系数。[yrast](../GEMMOD.f#L4544)｜[saddle](../GEMMOD.f#L4662)
 
 ### 8.12 angle：方向、自旋耦合与能量分配
 
@@ -758,7 +758,7 @@ E_{sad}=sad\_array(\min(A_1,A_2))+M_{ld,1}+M_{ld,2}
 
 `quantum_lp/quantum_imf` 用 CG 系数平方、球谐/旋转函数构造角概率；`quantum_ang_generator` 将其预积分为 CDF，`find_theta` 反查。当前 `para%quantum=.false.` 被 input 写死，但仍可能准备 q_ang 表；“调用 quantum_ang_generator”不等于启用了量子角分布。
 
-库内方向计算并不弥补主程序只传 J 大小、未传方向的接口限制。对实验室角关联的定量应用必须另外验证母核方向和 boost。[angle](../GEMMOD.for#L4764)
+库内方向计算并不弥补主程序只传 J 大小、未传方向的接口限制。对实验室角关联的定量应用必须另外验证母核方向和 boost。[angle](../GEMMOD.f#L4764)
 
 ### 8.13 evap：简化蒸发
 
@@ -777,7 +777,7 @@ p(ek)\propto e^{2\sqrt{a(U_2-ek)}-S(U_2)}
 
 接受/拒绝采样。这里的 ek 是超出 Coulomb 和离心势垒的部分，回传总相对动能会再加回势垒。
 
-`tl_iwbc=.false.` 开启此近似；即便 `.true.`，衰变过程中 `Z0<=10` 也会落入此分支。因此“全程 Hauser–Feshbach”不是当前实现的准确说法。[evap](../GEMMOD.for#L5961)
+`tl_iwbc=.false.` 开启此近似；即便 `.true.`，衰变过程中 `Z0<=10` 也会落入此分支。因此“全程 Hauser–Feshbach”不是当前实现的准确说法。[evap](../GEMMOD.f#L5961)
 
 ### 8.14 evaporation：Hauser–Feshbach 蒸发
 
@@ -811,13 +811,13 @@ Hauser_Feshbach
 
 共振能级的额外激发能可按截断 Breit–Wigner 型 `width/2*tan(179.998u−89.999)` 抽样；5He/5Li/8Be 还用特殊线形表。`exotic_index` 决定可选能级集合，不是一个可连续缩放的发射概率。
 
-源码 6602 写的是 `r1=r0*a1(mode)*.33333333`，不是 `r0*a1(mode)**.33333333`。它影响起始惯量与能量扫描位置；应作为实现疑点核实，不能在公式推导中悄悄改成预期立方根。[HF 主入口](../GEMMOD.for#L6532)
+源码 6602 写的是 `r1=r0*a1(mode)*.33333333`，不是 `r0*a1(mode)**.33333333`。它影响起始惯量与能量扫描位置；应作为实现疑点核实，不能在公式推导中悄悄改成预期立方根。[HF 主入口](../GEMMOD.f#L6532)
 
 ### 8.15 nonstatistical_mod：已知轻核离散态衰变
 
 按母核 `(Z,A,level)` 的 SELECT CASE，选择预置分支、线宽、粒子组合和可用能量。最多返回 3 个 daughter，例如多中子或不稳定轻核的逐级解体。衰变时间仍用 `exp_decay(Γ)`，角度和反冲由 angle 辅助。它不是高激发连续能级密度模型，作用是处理已知轻核态，避免对离散结构直接使用统计连续近似。
 
-能量分配基本受 `E_parent + Q = ΣE_daughter + E_relative` 约束，但特定支路使用内置能谱表和近似质量常数。`prepare_nonstatistical` 通过 SAVE first 只准备一次，与重复调用 `prepare_5li_5he` 的行为不同。[non_statistical](../GEMMOD.for#L7431)
+能量分配基本受 `E_parent + Q = ΣE_daughter + E_relative` 约束，但特定支路使用内置能谱表和近似质量常数。`prepare_nonstatistical` 通过 SAVE first 只准备一次，与重复调用 `prepare_5li_5he` 的行为不同。[non_statistical](../GEMMOD.f#L7431)
 
 ### 8.16 statistical_mod：通道竞争、IMF、裂变与 γ
 
@@ -841,7 +841,7 @@ U_0=E_0^*-E_{yrast},\quad
 t_d(\eta)=t_{delay}\exp[-\eta^2/(2\,sig_{delay}^2)].
 \]
 
-sharp_delay 时先等待剩余延迟再加指数寿命；非 sharp 分支模拟宽度随时间爬升。当前 input 只有在 `imf_option!=1,t_delay!=0,sig_delay!=0` 时设置 time_wise=true。[时间竞争](../GEMMOD.for#L8207)
+sharp_delay 时先等待剩余延迟再加指数寿命；非 sharp 分支模拟宽度随时间爬升。当前 input 只有在 `imf_option!=1,t_delay!=0,sig_delay!=0` 时设置 time_wise=true。[时间竞争](../GEMMOD.f#L8207)
 
 **IMF 模式 2**遍历 Z1 从 Z_imf_min 到 Z0/2，以质量表范围决定 A1，再调用 `complex_frag`。其鞍点热能为 `U_s=Ex−E_sad`，加上对应母核壳/配对修正后，用近似过渡态宽度：
 
@@ -874,7 +874,7 @@ d\Gamma_{E\lambda}\propto E_\gamma^{2\lambda+1}
 
 `w1=6.8e-8,w2=4.9e-14`，步长一般 1 MeV、U0≤15 时 0.2 MeV。GDR 分支被常量 `.FALSE.` 禁用。E1/E2 强度≤0 会被恢复为 0.1/50，不能用 0 禁用 γ。
 
-**形变涨落** `fluctuate` 在 K_sum 时搜索形变与 K，权重包含 `sqrt((5/4)*B/er0*T) × ρ̃ × sqrt(Br_parallel) / dqdx × Δq`，K≠0 加倍；`Δq=0.2`、`|q|<=5`、候选上限 10000。它改写父核 K 和当前 ratio，是更昂贵且需要独立验证的分支。[衰变核心](../GEMMOD.for#L7980)
+**形变涨落** `fluctuate` 在 K_sum 时搜索形变与 K，权重包含 `sqrt((5/4)*B/er0*T) × ρ̃ × sqrt(Br_parallel) / dqdx × Δq`，K≠0 加倍；`Δq=0.2`、`|q|<=5`、候选上限 10000。它改写父核 K 和当前 ratio，是更昂贵且需要独立验证的分支。[衰变核心](../GEMMOD.f#L7980)
 
 ### 8.17 gemsub：公开事件入口和递归级联
 
@@ -895,7 +895,7 @@ decay_event(parent):
 
 当前 `frag` 存的是递归末端产物，不是整个历史树。`max_frag=100`；插入前没有全面的上限保护，重系统高多重数不能只靠外层 MG=1000 保证安全。
 
-`dmp` 是可另行调用的事件文件写出入口，当前主程序未调用；`crash` 写 `gem.crash`，STATUS=NEW 意味着旧文件存在也可能影响异常记录。[gemsub](../GEMMOD.for#L10137)
+`dmp` 是可另行调用的事件文件写出入口，当前主程序未调用；`crash` 写 `gem.crash`，STATUS=NEW 意味着旧文件存在也可能影响异常记录。[gemsub](../GEMMOD.f#L10137)
 
 ## 9. 退激回填和参考系：怎样追踪同一个量
 
@@ -916,7 +916,7 @@ GEMINI 返回 `v` 单位 cm/ns、θ/φ 单位度。主程序采用近似：
 
 再用 QMD 侧质量表算产物基态质量及能量。这个 p=mv 转换是非相对论近似，不应被描述为完整相对论 p=γmv。
 
-母簇速度则由 `M=0.938*ICL`、`E=sqrt(M²+P²)` 得到 β=P/E，忽略了结合能和 E* 对母质量的修正，然后调用 `LORENTZ(-β)` 把 daughter 静止母核系推回原系。[回填](../anahyp.for#L2667)
+母簇速度则由 `M=0.938*ICL`、`E=sqrt(M²+P²)` 得到 β=P/E，忽略了结合能和 E* 对母质量的修正，然后调用 `LORENTZ(-β)` 把 daughter 静止母核系推回原系。[回填](../anahyp.f#L2667)
 
 ### 9.3 LORENTZ 的公式和实参别名问题
 
@@ -934,7 +934,7 @@ E'=\gamma(E-\boldsymbol\beta\cdot\mathbf p).
 
 负 β 表示反向 boost。小 β²<10⁻⁸ 时令除法项为 0；超光速/接近光速时把 `1−β²` 截到 10⁻¹⁰，不能把这个保护当作输入物理合法。
 
-主程序 2915 的调用把 `E_THIS,CLKX,CLKY,CLKZ` 同时传作输入与输出，而子程序先写 APZ 后才用 AZ 算 AP0，会因别名让能量读到更新后的动量；编译优化下也存在未定义别名行为风险。应以不同临时变量做输入/输出才能验证洛伦兹不变量，不能因函数公式本身正确就忽略调用方式。[LORENTZ](../anahyp.for#L3991)
+主程序 2915 的调用把 `E_THIS,CLKX,CLKY,CLKZ` 同时传作输入与输出，而子程序先写 APZ 后才用 AZ 算 AP0，会因别名让能量读到更新后的动量；编译优化下也存在未定义别名行为风险。应以不同临时变量做输入/输出才能验证洛伦兹不变量，不能因函数公式本身正确就忽略调用方式。[LORENTZ](../anahyp.f#L3991)
 
 ### 9.4 “Lab 谱”需审查的具体差异
 
@@ -989,7 +989,7 @@ CNPCS 的 Z 与 N 输出只到 150，并从 1 开始，省略 Z=0 自由中子/N
 
 推荐修正后的输出应使用明确区间 `[θlo,θhi]` 和精确 `ΔΩ=2π(cosθlo−cosθhi)`，并让填充/读取使用同一 bin 定义；这是改进方向，当前源码并未实现。
 
-动能 `ceiling(E/ΔE)` 对正 E 对应 `((i−1)ΔE,iΔE]`，输出的是上边界 `iΔE`，不是 bin 中心。大尺度分箱 `DDCSS_LNKED_S=1` 内部按 1、10、100… MeV 重分箱，并不读取样例文件后面的 Split/BinN 列表；该分支也不输出标准分支的 LNKED 部分。[输出分箱](../anahyp.for#L3153)
+动能 `ceiling(E/ΔE)` 对正 E 对应 `((i−1)ΔE,iΔE]`，输出的是上边界 `iΔE`，不是 bin 中心。大尺度分箱 `DDCSS_LNKED_S=1` 内部按 1、10、100… MeV 重分箱，并不读取样例文件后面的 Split/BinN 列表；该分支也不输出标准分支的 LNKED 部分。[输出分箱](../anahyp.f#L3153)
 
 ### 10.3 DIFF_T/B_DIFF 的真正作用
 

@@ -8,14 +8,14 @@
 
 | VS 中的项目 | 编译入口 | 用途 |
 |---|---|---|
-| Console1 | LQMD.for | 运行输运，生成初级事件数据 |
-| exfrag | exfrag.for | 读取已有 coll.dat、initangm.dat，重建激发能并运行 GEMINI 退激 |
+| Console1 | LQMD.f | 运行输运，生成初级事件数据 |
+| exfrag | exfrag.f | 读取已有 coll.dat、initangm.dat，重建激发能并运行 GEMINI 退激 |
 
 在解决方案资源管理器中，右键需要运行的项目，选择“设为启动项目”。已有初级事件、只想比较质量表时，选择 **exfrag**。
 
 工具栏选择 `Debug` 或 `Release`，平台选择 `x64`，再执行“生成 → 重新生成解决方案”。Debug 用于查错，Release 用于正式计算。Win32 配置保留用于旧环境；本轮仅验证 x64 的 ifx 编译。
 
-两个项目只编译各自的入口。`mass_select.for`、`main.for`、`GEMMOD.for`、`anahyp.for` 等由入口通过 INCLUDE 编入，不能再作为独立编译项重复添加。`mass_select.for` 是模块，不是第三个可执行程序。
+两个项目只编译各自的入口。`mass_select.f`、`main.f`、`GEMMOD.f`、`anahyp.f` 等由入口通过 INCLUDE 编入，不能再作为独立编译项重复添加。`mass_select.f` 是模块，不是第三个可执行程序。
 
 ## 2. 检查工作目录并运行
 

@@ -37,7 +37,7 @@ def main():
                 destination = unquote(link.split('#', 1)[0])
                 if destination and not (path.parent / destination).exists():
                     errors.append(f'Broken local link: {name}: {link}')
-        if name.startswith('fortran/') and path.suffix.lower() in {'.for', '.f'}:
+        if name.startswith('fortran/') and path.suffix.lower() in {'.f', '.f'}:
             for line in path.read_text(encoding='utf-8-sig', errors='replace').splitlines():
                 if line[:1].upper() in {'C', '*', '!'}:
                     continue

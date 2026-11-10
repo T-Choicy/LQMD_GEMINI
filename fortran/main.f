@@ -2030,4 +2030,4 @@ C 		PAUSE
       CALL report_mass_comparison_usage()
 	end
 
-      include 'target_orientation.for'
+      include 'target_orientation.f'

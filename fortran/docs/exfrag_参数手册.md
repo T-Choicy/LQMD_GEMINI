@@ -8,7 +8,7 @@
 
 实际输入只有 [Input file/anahyp.in](../Input%20file/anahyp.in)。以下“行”均为该文件的物理行号，**样例值不等于推荐值或自动默认值**。删除标题、增加空行、交换行序都会改变后续读取。各行尾部多余文字虽可因接收项已满足而被忽略，也不应据此改列数。
 
-第 1、5、11、15、18、23、25、33、35、38、40、45、46、55、64 行是被空 `READ` 消费的标题行。数值记录由 [anahyp:283](../anahyp.for#L283) 与 [INPUT_ANA:10182](../GEMMOD.for#L10182) 顺序消费，总计 67 行。文件后面的内容不会自动成为新配置。
+第 1、5、11、15、18、23、25、33、35、38、40、45、46、55、64 行是被空 `READ` 消费的标题行。数值记录由 [anahyp:283](../anahyp.f#L283) 与 [INPUT_ANA:10182](../GEMMOD.f#L10182) 顺序消费，总计 67 行。文件后面的内容不会自动成为新配置。
 
 类型：I=整数，R=实数，L=逻辑 `.true./.false.`。主程序没有 `IMPLICIT NONE`，I–N 开头默认整数，其余默认实数；有显式声明时以声明为准。所以一些“开关”实际上是实数。为保持当前分支判定，仍填精确的 0 或 1，不填近似值。
 
@@ -65,7 +65,7 @@
 | 34 | `CNPCS` I = 1 | 输出 HOT/COLD 的核素和 A/Z/N 投影统计 | 当前初始化代码从未正确打开的 unit 18 读配置，样例必需先处理此缺陷；不能认为表文件为空只是统计不足 |
 | 34 | `IPCS` I = 0 | 按 IPCS_in.in 指定的元素写同位素产额 | 元素列表与容量 IPCSMAX 一起核对；其归一化没有统一跟随 NTH_RUN 的全部分支 |
 | 34 | `TEELECS` I = 0 | 指定核素 HOT/COLD 计数随时间 | 输入 TEELECS_in.in；与 ECHECK 共用 unit 19；输出量不是已经乘面积的 mb |
-| 34 | `TECOLD` I = 75 fm/c | 只有 `k>=CEILING(TECOLD/DELT)` 才累计冷产物时间计数 | 见[时间统计段](../anahyp.for#L2966)；使用硬编码 DELT=0.5 而非输入 dt，二者不一致时物理时间门也不一致 |
+| 34 | `TECOLD` I = 75 fm/c | 只有 `k>=CEILING(TECOLD/DELT)` 才累计冷产物时间计数 | 见[时间统计段](../anahyp.f#L2966)；使用硬编码 DELT=0.5 而非输入 dt，二者不一致时物理时间门也不一致 |
 | 36 | `LNVICS` I = 0 | 打开 LNVICS.dat，但初始化、累计与最终输出分支为空 | 当前是未完成的速度分布功能；开关为1不保证有数据，不适合作为已有分析接口使用 |
 | 36 | `ELEKED` I = 0 | 指定产物动能分布 | 示例输入列数、unit 18 与最终 unit 21 都有问题；先修复输入/输出契约再标定 |
 | 36 | `DDCSS_LNKED` I = 0 | 标准双微分截面、能量记录计数 | 需要 DDCSS_LNKED_in.in；常量 dkin/dthe 控制真实细格，不由配置注释中的建议格距自动替换 |
@@ -109,7 +109,7 @@
 
 ## 6. GEMINI 尾部参数
 
-所有参数先由 INPUT_ANA 存入 `_ANA` 变量，再在每个热簇的 `input(IZ,IN,NEXC,-1.)` 中拷入全局 `para`。以下类型来自 gemsub/gem_kind 声明，约束来自 [input](../GEMMOD.for#L10568)。
+所有参数先由 INPUT_ANA 存入 `_ANA` 变量，再在每个热簇的 `input(IZ,IN,NEXC,-1.)` 中拷入全局 `para`。以下类型来自 gemsub/gem_kind 声明，约束来自 [input](../GEMMOD.f#L10568)。
 
 | 行 | 参数 / 类型 / 样例 | 作用与适用分支 | 如何调整 |
 |---:|---|---|---|
@@ -154,7 +154,7 @@ anahyp: input(IZ, IN, NEXC, -1.)
 
 ### 6.2 aden_type 的全部 23 个公式
 
-源码：[get_little_a](../GEMMOD.for#L2873)。记 A=质量数、Z=电荷数、U=进入 SELECT CASE 前已经做配对/壳修正的能量、s=表面形状因子 surf、c=aden_0、k0=`aden_k0`、kinf=`aden_kinf`、J=角动量、`Zβ=A/(1.98+0.0155 A^(2/3))`。本表先给未乘实参 aa_scale 的 a；最后统一 `a*=aa_scale`，`S=2√(aU)`。小数指数按源码保留，不强行改为精确分数。
+源码：[get_little_a](../GEMMOD.f#L2873)。记 A=质量数、Z=电荷数、U=进入 SELECT CASE 前已经做配对/壳修正的能量、s=表面形状因子 surf、c=aden_0、k0=`aden_k0`、kinf=`aden_kinf`、J=角动量、`Zβ=A/(1.98+0.0155 A^(2/3))`。本表先给未乘实参 aa_scale 的 a；最后统一 `a*=aa_scale`，`S=2√(aU)`。小数指数按源码保留，不强行改为精确分数。
 
 | aden_type | 当前实现的 a | c 的含义 / 说明 |
 |---:|---|---|

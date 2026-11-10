@@ -1,6 +1,6 @@
 # 四控制器的共同流程（TASK-029）
 
-`ctrlL.for` / `ctrlL_win.f` 调用同一 L 阶段，`ctrlA.for` / `ctrlA_win.for` 调用同一 A 阶段。四文件均包含 `controller_dispatch.for`，调用现有 `scripts/windows_event_controller.ps1`，不再各自维护模板解析、分片和汇总代码。物理主程序、分析程序和输入模板没有改变。
+`ctrlL.f` / `ctrlL_win.f` 调用同一 L 阶段，`ctrlA.f` / `ctrlA_win.f` 调用同一 A 阶段。四文件均包含 `controller_dispatch.f`，调用现有 `scripts/windows_event_controller.ps1`，不再各自维护模板解析、分片和汇总代码。物理主程序、分析程序和输入模板没有改变。
 
 原 `.in` 入口读取 `INPUT.in` / `INPUT_ANA.in`，按 `m_select.in` 指定的 1–5 中一张表运行；保持 Windows 版既有范围，不能用这个入口选择 0。JSON 配置的 `Models=[1,2,3,4,5]` 在共用轨迹上逐表分析。Windows 的五组输运批跑仍使用 `run_windows_mass_models.ps1`，详见 [原使用说明](RUNNING.md)。这两种五表流程不能当作同一种统计抽样。
 
@@ -13,8 +13,8 @@ Linux 编译示例（仅编译控制器，不编译物理程序）：
 ```sh
 cd /path/to/Spallation
 mkdir -p fortran/bin
-gfortran -ffixed-line-length-132 -I fortran fortran/ctrlL.for -o fortran/bin/ctrlL
-gfortran -ffixed-line-length-132 -I fortran fortran/ctrlA.for -o fortran/bin/ctrlA
+gfortran -ffixed-line-length-132 -I fortran fortran/ctrlL.f -o fortran/bin/ctrlL
+gfortran -ffixed-line-length-132 -I fortran fortran/ctrlA.f -o fortran/bin/ctrlA
 ./fortran/bin/ctrlL --prepare-only
 # 确认准备的私有输入后，去掉 --prepare-only 运行；CALL_ANA=1 自动分析。
 ```
