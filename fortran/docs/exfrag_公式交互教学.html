@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>exfrag · 公式交互教学</title>
+<style>
+:root { --ink:#20344d; --muted:#596b7e; --blue:#24649b; --pale:#edf5fb; --orange:#ba6b24; --line:#d9e3ec; }
+* {box-sizing:border-box} body{margin:0;background:#f3f6f9;color:var(--ink);font:16px/1.75 "Segoe UI","Microsoft YaHei",sans-serif}
+main{max-width:1080px;margin:auto;padding:38px 24px 60px} header{margin-bottom:28px} h1{font-size:32px;line-height:1.35;margin:8px 0 12px}h2{font-size:23px;margin:0 0 12px}h3{font-size:17px;margin:15px 0 8px}p{margin:8px 0 14px}.kicker{font-size:13px;letter-spacing:.08em;color:var(--blue);font-weight:700}.muted,small{color:var(--muted)}small{font-size:13px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}.card{background:white;border:1px solid var(--line);border-radius:12px;padding:26px;margin-bottom:22px}.wide{grid-column:1/-1}.formula{background:var(--pale);border-left:3px solid var(--blue);padding:12px 15px;margin:15px 0;font-size:18px;overflow-wrap:anywhere}.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px 22px}label{display:block;font-size:14px;font-weight:600}input[type=number]{width:100%;padding:7px 10px;border:1px solid #bacbda;border-radius:5px;color:var(--ink);font:inherit;background:#fcfdff}input[type=range]{width:100%;accent-color:var(--blue)}.metrics{display:flex;flex-wrap:wrap;gap:12px;margin:18px 0}.metric{background:#f5f8fb;padding:10px 15px;border-radius:6px;flex:1;min-width:110px}.metric strong{display:block;font-size:25px;color:var(--blue);font-variant-numeric:tabular-nums}.metric span{font-size:13px}.warning{color:#995013;font-size:14px}.bar{display:flex;height:34px;background:#e6edf3;border-radius:5px;overflow:hidden}.bar>span{display:flex;align-items:center;justify-content:center;color:white;font-size:13px;white-space:nowrap;transition:width .1s}.blue{background:#24649b}.teal{background:#448b8a}.orange{background:#ba6b24}.legend{display:flex;gap:20px;font-size:14px;flex-wrap:wrap;margin:8px 0 12px}.dot{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px}.probstrip{height:120px;display:grid;grid-template-columns:repeat(31,1fr);align-items:end;gap:3px;margin-top:20px;border-bottom:1px solid #9bb2c5}.probstrip span{background:#9dbbd1;min-height:1px;border-radius:3px 3px 0 0}.probstrip span.selected{background:var(--orange)}.axis{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}button{border:1px solid #abc3d6;border-radius:5px;background:var(--pale);padding:7px 13px;font:inherit;color:var(--blue);cursor:pointer}button:hover{background:#dcecf8}a{color:var(--blue)}footer{border-top:1px solid var(--line);padding-top:15px;font-size:13px;color:var(--muted)}code{font-size:.92em;background:#f1f4f7;padding:2px 4px;border-radius:3px}.resultline{min-height:55px;font-size:15px}.badge{display:inline-block;background:#e5edf5;color:#385a79;font-size:12px;padding:2px 8px;border-radius:4px;margin-bottom:12px}input:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid #e1a755;outline-offset:3px}
+@media(max-width:750px){main{padding:23px 15px}.grid{grid-template-columns:1fr}.wide{grid-column:auto}.card{padding:21px}h1{font-size:26px}.controls{gap:10px 15px}.metrics{gap:8px}.metric{min-width:95px;padding:8px 10px}}
+</style>
+</head>
+<body>
+<main>
+<header>
+<div class="kicker">CHARITY 2008 × EXFRAG</div>
+<h1>看清公式中每个量怎样改变结果</h1>
+<p>先用简化模型理解方向，再回到代码核对完整计算。下列数值是教学设定，<strong>不运行 GEMINI，也不输出物理标定结果</strong>。所有计算都在本地页面完成。</p>
+<p class="muted">配套阅读：<a href="exfrag_公式精讲_对照Charity2008.md">公式精讲与文献式号对照</a> · <a href="exfrag_工程代码说明书.md">工程说明书</a> · <a href="exfrag_参数手册.md">参数手册</a></p>
+</header>
+
+<section class="card">
+<span class="badge">01 · 文献式（3）、（11）的恒定 a 近似</span>
+<h2>总激发能、热能和温度</h2>
+<p>先从总激发能中扣除旋转基线，再加配对回移量。本面板不加壳修正，a 与 U 无关；旋转能由你直接给定，不计算 Sierk 模型。</p>
+<div class="formula">U = E* − E<sub>rot</sub> + δP　　a = A / k　　𝒮 = 2√(aU)　　T ≈ √(U/a)</div>
+<div class="controls">
+<label>A · 核子数<input id="mass" type="number" min="1" max="300" step="1" value="56"></label>
+<label>k = aden_0 · MeV<input id="adenk" type="number" min="1" max="30" step="0.1" value="8"></label>
+<label>E* · MeV<input id="ex" type="range" min="0" max="200" step="1" value="50"><output id="exv">50</output></label>
+<label>E_rot · MeV<input id="erot" type="range" min="0" max="70" step="1" value="4"><output id="erotv">4</output></label>
+<label>δP · MeV<input id="pair" type="range" min="-5" max="10" step="0.5" value="2"><output id="pairv">2</output></label>
+</div>
+<div class="metrics" aria-live="polite">
+<div class="metric"><span>热能 U / MeV</span><strong id="uout"></strong></div>
+<div class="metric"><span>a / MeV⁻¹</span><strong id="aout"></strong></div>
+<div class="metric"><span>温度 T / MeV</span><strong id="tout"></strong></div>
+<div class="metric"><span>熵 𝒮 · 无量纲</span><strong id="sout"></strong></div>
+<div class="metric"><span>E*/A / MeV/u</span><strong id="epera"></strong></div>
+</div>
+<p class="resultline" id="energyNote"></p>
+<small>改变 k 时留意：k 增大 → a 减小；固定正 U 下，T 升高而熵降低。若 a 随 U 变化，严格导数温度还包含 da/dU，本面板没有模拟这一项。</small>
+</section>
+
+<div class="grid">
+<section class="card">
+<span class="badge">02 · 无延迟的通道竞争</span>
+<h2>宽度决定概率，也决定寿命</h2>
+<div class="formula">Pᵢ = Γᵢ / ΣΓ　　平均寿命 τ = 0.65824 / ΣΓ zs</div>
+<div class="controls">
+<label>Γ_n · MeV<input id="gn" type="number" min="0" max="100" step="0.05" value="0.8"></label>
+<label>Γ_p · MeV<input id="gp" type="number" min="0" max="100" step="0.05" value="0.15"></label>
+<label>Γ_γ · MeV<input id="gg" type="number" min="0" max="100" step="0.05" value="0.05"></label>
+</div>
+<div class="metrics"><div class="metric"><span>ΣΓ / MeV</span><strong id="gtot"></strong></div><div class="metric"><span>平均寿命 / zs</span><strong id="tau"></strong></div></div>
+<div class="bar" aria-label="三个通道的概率"><span id="bn" class="blue"></span><span id="bp" class="teal"></span><span id="bg" class="orange"></span></div>
+<div class="legend"><span><i class="dot blue"></i>中子</span><span><i class="dot teal"></i>质子</span><span><i class="dot orange"></i>γ</span></div>
+<p id="probtext" class="resultline" aria-live="polite"></p>
+<button id="doubleWidths" type="button">三个宽度同时 ×2</button>
+<p><small>观察：统一放大全部宽度，分支概率不变，平均寿命变短。这里的宽度由你给定，不是从上面母核参数算出的 HF 结果。有延迟时需使用对应的时间竞争模型。</small></p>
+</section>
+
+<section class="card">
+<span class="badge">03 · 文献式（10）的局部近似</span>
+<h2>势垒升高，可用鞍点热能减少</h2>
+<div class="formula">Γ(B + ΔB) / Γ(B) ≈ exp(−ΔB / T_s)</div>
+<label>鞍点温度 T_s · MeV<input id="ts" type="range" min="0.5" max="5" step="0.1" value="2"><output id="tsv">2</output></label>
+<label>相对势垒改变量 ΔB · MeV<input id="db" type="range" min="-3" max="6" step="0.1" value="2"><output id="dbv">2</output></label>
+<div class="metrics"><div class="metric"><span>相对宽度</span><strong id="bratio"></strong></div></div>
+<p id="barrierNote" class="resultline" aria-live="polite"></p>
+<small>比较时保持母核分母、温度和其它缓变因子近似不变。这是局部敏感性估计；不适用于用它替代整套裂变宽度或接近阈值时的精确积分。它也不代表当前 imf_option=2 会读取 b_scale。</small>
+</section>
+</div>
+
+<section class="card">
+<span class="badge">04 · 文献式（22）</span>
+<h2>最可能的是温度相等，而不是能量平分</h2>
+<div class="formula">P(U₁) ∝ exp[2√(a₁U₁) + 2√(a₂(U_tot − U₁))]<br>U₁,peak = U_tot × a₁ / (a₁ + a₂)</div>
+<div class="controls">
+<label>a₁ · MeV⁻¹<input id="shareA1" type="number" min="0.1" max="100" step="0.5" value="8"></label>
+<label>a₂ · MeV⁻¹<input id="shareA2" type="number" min="0.1" max="100" step="0.5" value="12"></label>
+<label>可分配热能 U_tot · MeV<input id="shareU" type="range" min="1" max="200" step="1" value="60"><output id="shareUv">60</output></label>
+<label>试选碎片1的热能占比<input id="shareFraction" type="range" min="0" max="100" step="any" value="50"><output id="shareFractionv">50%</output></label>
+</div>
+<div class="metrics">
+<div class="metric"><span>试选 U₁ / MeV</span><strong id="u1out"></strong></div>
+<div class="metric"><span>试选 U₂ / MeV</span><strong id="u2out"></strong></div>
+<div class="metric"><span>温度 T₁ / MeV</span><strong id="t1out"></strong></div>
+<div class="metric"><span>温度 T₂ / MeV</span><strong id="t2out"></strong></div>
+<div class="metric"><span>P(试选) / P(峰)</span><strong id="pout"></strong></div>
+</div>
+<p id="shareNote" aria-live="polite"></p>
+<div class="probstrip" id="shareStrip" role="img" aria-label="从0到全部热能给碎片1时，相对概率密度的变化"></div>
+<div class="axis"><span>U₁ = 0</span><span>横轴：给碎片1的热能；柱高：相对概率密度</span><span>U₁ = U_tot</span></div>
+<p><small>橙色柱是最靠近当前试选值的显示格，不代表单次抽样结果。柱高按连续分布的理论峰归一化，不是每格的概率；真实代码还要扣集体模式能量、限制采样区间并加回旋转能。</small></p>
+<button id="atPeak" type="button">移到最可能分配附近</button>
+</section>
+
+<footer>
+<p>依据：R. J. Charity，GEMINI: A Code to Simulate the Decay of a Compound Nucleus by a Series of Binary Decays，May 2008，文献式（3）、（10）、（11）、（22）及本地 <code>GEMMOD.for</code>。完整的页码、式号、假设和版本差异见配套公式精讲。</p>
+<p>当前 Fortran 的能级密度、参考系和接口有额外处理；本页不复现这些实现细节。修改页面数值不会更改任何工程输入文件。</p>
+</footer>
+</main>
+<script>
+'use strict';
+const el = id => document.getElementById(id);
+const val = id => Number(el(id).value);
+const fmt = (x,n=3) => Number.isFinite(x) ? x.toFixed(n) : '—';
+function energyValues(A,k,E,R,P){const U=E-R+P,a=A/k;return{U,a,T:U>0?Math.sqrt(U/a):NaN,S:U>0?2*Math.sqrt(a*U):NaN,epera:E/A};}
+function probabilities(widths){const total=widths.reduce((s,x)=>s+x,0);return{total,p:widths.map(x=>total>0?x/total:0),tau:total>0?.65824/total:Infinity};}
+function sharing(a1,a2,U,f){const u1=U*f,u2=U-u1,peak=U*a1/(a1+a2),logPeak=2*Math.sqrt((a1+a2)*U),logP=2*Math.sqrt(a1*u1)+2*Math.sqrt(a2*u2);return{u1,u2,t1:Math.sqrt(u1/a1),t2:Math.sqrt(u2/a2),peak,relative:Math.exp(logP-logPeak)};}
+function renderEnergy(){const A=val('mass'),k=val('adenk'),E=val('ex'),R=val('erot'),P=val('pair');['ex','erot','pair'].forEach(id=>el(id+'v').textContent=val(id));if(!(A>0&&k>0)){['uout','aout','tout','sout','epera'].forEach(id=>el(id).textContent='—');el('energyNote').textContent='A 和 k 必须为正。';return;}const r=energyValues(A,k,E,R,P);['U','a','T','S','epera'].forEach((key,i)=>el(['uout','aout','tout','sout','epera'][i]).textContent=fmt(r[key]));el('energyNote').textContent=r.U>0?`能量账本：${E} − ${R} + ${P} = ${fmt(r.U,1)} MeV。T=${fmt(r.T)} MeV，与 E*/A=${fmt(r.epera)} MeV/u 是不同的量。`:'该设置没有正的热激发能；这里不继续套用正热能的连续费米气体公式。';el('energyNote').classList.toggle('warning',r.U<=0);}
+function renderWidths(){const widths=['gn','gp','gg'].map(id=>val(id));if(widths.some(x=>!Number.isFinite(x)||x<0)){el('probtext').textContent='宽度必须是有限的非负数。';el('gtot').textContent=el('tau').textContent='—';['bn','bp','bg'].forEach(id=>{el(id).style.width='0%';el(id).textContent='';});return;}const r=probabilities(widths);el('gtot').textContent=fmt(r.total);el('tau').textContent=fmt(r.tau);r.p.forEach((p,i)=>{const b=el(['bn','bp','bg'][i]);b.style.width=100*p+'%';b.textContent=p>=.09?(100*p).toFixed(1)+'%':'';});el('probtext').textContent=r.total>0?`P_n=${fmt(r.p[0])}，P_p=${fmt(r.p[1])}，P_γ=${fmt(r.p[2])}；概率之和为1。`:'总宽度为0，本模型没有可选择的出口，有限平均寿命也不再定义。';}
+function renderBarrier(){const T=val('ts'),d=val('db'),r=Math.exp(-d/T);el('tsv').textContent=fmt(T,1);el('dbv').textContent=fmt(d,1);el('bratio').textContent=fmt(r,4);el('barrierNote').textContent=d>=0?`势垒提高 ${fmt(d,1)} MeV，局部近似宽度变为基准的 ${fmt(100*r,1)}%。`:`势垒降低 ${fmt(-d,1)} MeV，局部近似宽度变为基准的 ${fmt(r,2)} 倍。`;}
+function renderSharing(){const a1=val('shareA1'),a2=val('shareA2'),U=val('shareU'),f=val('shareFraction')/100;el('shareUv').textContent=U;el('shareFractionv').textContent=fmt(f*100,2)+'%';if(!(a1>0&&a2>0)){['u1out','u2out','t1out','t2out','pout'].forEach(id=>el(id).textContent='—');el('shareNote').textContent='两个能级密度参数必须为正。';el('shareStrip').replaceChildren();return;}const r=sharing(a1,a2,U,f);['u1','u2','t1','t2','relative'].forEach((key,i)=>el(['u1out','u2out','t1out','t2out','pout'][i]).textContent=fmt(r[key]));el('shareNote').textContent=`理论峰值在 U₁=${fmt(r.peak,2)}、U₂=${fmt(U-r.peak,2)} MeV；此时两碎片温度都为 ${fmt(Math.sqrt(U/(a1+a2)))} MeV。`;const bars=[];for(let i=0;i<=30;i++){const q=sharing(a1,a2,U,i/30);const b=document.createElement('span');b.style.height=(q.relative*100)+'%';b.title=`U₁=${fmt(q.u1,1)} MeV，相对密度=${fmt(q.relative,4)}`;if(i===Math.round(f*30))b.classList.add('selected');bars.push(b);}el('shareStrip').replaceChildren(...bars);}
+function renderAll(){renderEnergy();renderWidths();renderBarrier();renderSharing();}
+document.querySelectorAll('input').forEach(input=>input.addEventListener('input',renderAll));
+el('doubleWidths').addEventListener('click',()=>{['gn','gp','gg'].forEach(id=>{if(Number.isFinite(val(id))&&val(id)>=0)el(id).value=val(id)*2;});renderWidths();});
+el('atPeak').addEventListener('click',()=>{const a1=val('shareA1'),a2=val('shareA2');if(a1>0&&a2>0){el('shareFraction').value=100*a1/(a1+a2);renderSharing();}});
+renderAll();
+</script>
+</body>
+</html>

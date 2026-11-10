@@ -1,0 +1,10 @@
+5 ! NFILE：分析分片数，与INPUT.in一致
+20000 ! NRUN_PER：每片事件数，与动力学一致
+p232Th800_100k ! NAME：与INPUT.in的任务名一致
+1 ! T_PER：检查间隔秒数
+8.25 ! X00CUT：由LQMD0.in同步
+-0.2825, 0.2300, 1.16667 ! alpha,beta,gamma
+0.0120, 0.0097, 1.66667 ! gsur,gtau,eta
+-0.0027, 0.032 ! gsym,symm
+0 ! momp
+! 本文件沿用原ctrlA顺序；ctrlL的CALL_ANA=1时自动衔接分析。

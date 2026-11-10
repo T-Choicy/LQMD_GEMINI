@@ -1,0 +1,49 @@
+1 ! m_select: 0=legacy, 1=FRDM12, 2=HFB02, 3=KTUY05, 4=WS4+RBF, 5=LDMM
+! framework 0 keeps legacy guards; framework 1 supports m_select 0..5.
+! framework 1 model 5 uses inferred LDMM column 5; provenance unverified.
+1 ! mass_framework: 0=legacy paths, 1=common ground-state mass comparison
+314159 ! comparison_seed: positive, used only when mass_framework=1
+!
+!! 参数说明与使用方法
+!
+! （1）m_select：选择质量表，修改本文件顶部第一个数据值。
+!     0：原默认质量数据；统一框架中的M0取 massfrdm.dat 的采用质量。
+!     1：FRDM12，读取 frdm12.dat 的理论总质量。
+!     2：HFB02，读取 mass-hfb02.dat 的理论总质量。
+!     3：KTUY05，读取 KTUY05_m246.dat 的理论总质量。
+!     4：WS4+RBF，读取 wsm14.dat 第4列，包含RBF修正。
+!     5：本地LDMM候选质量面，读取 ldmm.dat 第5列，不再叠加第4列。
+!        LDMM文件来源尚未认证，解释结果时需保留这一限定。
+!
+! （2）mass_framework：选择质量表的使用框架，修改顶部第二个数据值。
+!     0：保留原有计算路径，只支持 m_select=0 或1；选择2至5会报错停止。
+!        选择0保持原默认；选择1在已核验的FRDM12映射下联动两端质量。
+!        FRDM12表外衰变子核沿用整套旧记录，初始激发残核须有FRDM12覆盖。
+!     1：统一退激框架，支持 m_select=0至5，用于比较基态质量表的效应。
+!        LQMD动力学固定使用共同基准质量M0，各组选表不改变动力学质量。
+!        分析程序按所选质量表重建激发能，GEMINI按相应质量计算退激阈值。
+!        壳修正、平均配对回移、能级密度及相对势垒保持同一套参考处方。
+!        新理论质量只用于Z>=8且N>=8的共同域；轻核共用M0，域内缺项记录回退。
+!
+! （3）comparison_seed：比较随机种子，修改顶部第三个数据值，须为正整数。
+!     默认314159；仅在 mass_framework=1 时用于初始化Fortran随机数序列。
+!     比较不同质量表时保持此值相同，便于在相同程序和输入下复现计算。
+!     旧过程内部单独设置的随机种子仍按原代码处理。
+!     各表的退激分支可能不同，因此相同种子不保证逐步抽取相同的随机数。
+!
+!! 使用示例与注意事项
+! （1）保持原默认：顶部三个数据值依次为 0、0、314159。
+! （2）本次五表对比：第二个值固定为1，第三个值固定为314159，
+!     只将第一个值分别改为1、2、3、4、5，再分别运行分析程序。
+! （3）例如使用HFB02统一框架，顶部三个数据行应写为：
+!     2       ! m_select
+!     1       ! mass_framework
+!     314159  ! comparison_seed
+!     此处示例均为注释，真正生效的是本文件顶部三个数据值。
+! （4）统一框架可复用同一份coll.dat和initangm.dat，重新运行分析即可比较各表，
+!     无须因更换质量表重复生成相同的LQMD初级事件。
+! （5）修改实际运行目录中的 Input file/m_select.in；各独立目录分别读取各自配置。
+!     两端需使用对应配置；表文件已放好且程序已编译接入模块时，无须重新编译。
+!     改值后需重新运行相应程序，已经生成的结果文件不会自动更新。
+! （6）程序按顺序读取前三个非空、非注释数据行；以!或#开头的行会跳过。
+!     后两个数据行省略时，默认 mass_framework=0、comparison_seed=314159。

@@ -1,0 +1,22 @@
+# Preserve release bytes across Windows/Linux checkouts for provenance hashes.
+* -text
+# Imported fixed-form source, numerical tables and historical notes retain padding.
+fortran/** -whitespace
+examples/**/*.in -whitespace
+
+# Keep the imported fixed-width mass tables byte-for-byte, including padding.
+"fortran/Input file/frdm12.dat" -text -whitespace
+"fortran/Input file/mass-hfb02.dat" -text -whitespace
+"fortran/Input file/KTUY05_m246.dat" -text -whitespace
+"fortran/Input file/wsm14.dat" -text -whitespace
+"fortran/Input file/ldmm.dat" -text -whitespace
+
+# Preserve imported originals and immutable numerical result snapshots.
+mass_tables/*.dat -text -whitespace
+data/p+232Th/mass_compare_80MeV_b825_10k_20261023/** -text -whitespace
+data/p+232Th/mass_compare_80MeV_b825_100k_20261027/** -text -whitespace
+fortran/COUNTSUR.dat -text -whitespace
+fortran/SURF_COAL.dat -text -whitespace
+fortran/FRAG_CORR.dat -text -whitespace
+fortran/IPCS_out.dat -text -whitespace
+data/p+232Th/mass_compare_800MeV_b825_100k_20261028/** -text -whitespace

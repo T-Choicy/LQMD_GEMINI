@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VisualStudioProject ProjectCreator="Intel Fortran" Keyword="Console Application" Version="11.0" ProjectIdGuid="{5DC75E13-24DD-42BC-AFF3-B8AFFC04C1B8}">
+  <Platforms>
+    <Platform Name="x64"/>
+  </Platforms>
+  <Configurations>
+    <Configuration Name="Debug|x64" UseCompiler="ifxCompiler" OutputDirectory="x64\$(ConfigurationName)\win_batch" IntermediateDirectory="x64\$(ConfigurationName)\win_batch\obj\ctrlA" TargetName="ctrlA_win">
+      <Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" WarnInterfaces="true" Traceback="true" BoundsCheck="true" StackFrameCheck="true" RuntimeLibrary="rtMultiThreadedDebugDLL" AdditionalOptions="/fixed /extend-source:132" AdditionalIncludeDirectories="$(ProjectDir)" ModulePath="$(IntDir)" ObjectFile="$(IntDir)\"/>
+      <Tool Name="VFLinkerTool" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" GenerateDebugInformation="true" SubSystem="subSystemConsole" OutputFile="$(OutDir)\ctrlA_win.exe"/>
+      <Tool Name="VFResourceCompilerTool"/>
+      <Tool Name="VFMidlTool" SuppressStartupBanner="true"/>
+      <Tool Name="VFCustomBuildTool"/>
+    </Configuration>
+    <Configuration Name="Release|x64" UseCompiler="ifxCompiler" OutputDirectory="x64\$(ConfigurationName)\win_batch" IntermediateDirectory="x64\$(ConfigurationName)\win_batch\obj\ctrlA" TargetName="ctrlA_win">
+      <Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" Optimization="optimizeMaxSpeed" WarnInterfaces="true" Traceback="true" BoundsCheck="true" RuntimeLibrary="rtMultiThreadedDLL" AdditionalOptions="/fixed /extend-source:132" AdditionalIncludeDirectories="$(ProjectDir)" ModulePath="$(IntDir)" ObjectFile="$(IntDir)\"/>
+      <Tool Name="VFLinkerTool" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" GenerateDebugInformation="true" SubSystem="subSystemConsole" OutputFile="$(OutDir)\ctrlA_win.exe"/>
+      <Tool Name="VFResourceCompilerTool"/>
+      <Tool Name="VFMidlTool" SuppressStartupBanner="true"/>
+      <Tool Name="VFCustomBuildTool"/>
+    </Configuration>
+  </Configurations>
+  <Files>
+    <Filter Name="Source Files" Filter="for;f;ftn;fpp">
+      <File RelativePath=".\ctrlA_win.for"/>
+    </Filter>
+  </Files>
+  <Globals/>
+</VisualStudioProject>

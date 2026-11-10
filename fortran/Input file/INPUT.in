@@ -1,0 +1,7 @@
+1 ! NFILE
+2 ! NRUN_PER: installation smoke only
+default_smoke800 ! NAME
+0
+1
+1 ! CALL_ANA
+0 ! FAIL
