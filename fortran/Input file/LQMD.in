@@ -1,0 +1,68 @@
+1, 10000, 0, 0		!nrmin,nrmax(number of events), nth_run, nth_noh
+1, 1, 232, 90, 0		!npr,nzpr,nta,nzta,nanti
+8.5, 8.5, 0.5, 8.5, 1		!x00min,x00max,x00stp,x00cut,nx00（x00cut 是手动设置截止碰撞参数，0.时采用rrt）
+1.0, 300 0.5, 0, 150		!epp (GeV/u in Lab. sys., GeV/c if npr=1),nt,dt,ITMIN,ITMAX
+-0.2825, 0.2300, 1.16667 	!alpha/GeV,beta/GeV,gamma
+0.0120, 0.0097, 1.66667, -0.0027, 0.032, 0.16		!gsur,gtau,eta,gsym,symm,(GeV)rho0
+0.043, -0.01675, 0., 2.		!asym,bsym,csym /GeV,gamms
+0., 0., 0., 1.6, 0.12, 30	!vpa,vpb,vpc,q01,p01,e01 Pauli potential
+1.16, 0.65, 0.08, 0.92		!r0,ds,c1,c2
+2.0, 3.5			!rsur, rmin
+0., 0., 0.143		!betap, betat, betac
+0,  0,  300			!ish, ipot, iwrite
+0.00176, 500., -0.0848, -0.65, 0	!Cdelta/GeV,epsim,cmom/GeV,xsym,momp
+3, 1, 3, 1, 0, 0, 1		!iflag1,iflag2,iflag3,iflag4,iflag5,iflag6,iflag7
+0, 0, 0, 0			!mdel,mdin,npop,nkaon(1 for LF)
+1, 2.			!nsym,xmu
+10, 0., 1, 0, 0, 0, 8, 0., 4	!kfile, v01, initi, ibin, ird, crsc, ifile, gradi, nmint
+0,0,0,1,2			!iprin,ifdelt,iflagcro,iflagpau,ipoli
+1,0			!OUTBARYON, OUTMESON
+0, 8., 0.2, 1000		!GETX00CUT, GETX00CUT_IN, GETX00CUT_ST, G_ROT
+!表面并合模型输入
+0, 0, 0, 1.			!SURF_COAL, PRINT_CLUST, PRINT_POT, NDATA
+1, 300				!K_START_SURF, K_END_SURF（在使用CONTROL时要等于NT）
+4., 2., 2.5, 0.86			!RR0, D0_SURF, COAL_PATH, CLUST_LEAST_DIST_COEF
+387, 387, 387, 387, 387		!H0(1), H0(2), H0(3), H0(4), H0(5)
+359., 0				!H1_SURF, INCL4_6
+
+
+!!
+OUTBARYION	0的时候不输出重子coll，1的时候输出
+OUTBMESON	0的时候不输出介子coll，1的时候输出
+
+GETX00CUT	%%获取截止碰撞参数（需要x00min=x00max，nx00=1, 且有足够的事件数来完成整个获取过程）
+	GETX00CUT_IN	%%起始碰撞参数
+	GETX00CUT_ST	%%抽取步长
+	G_RT		%%在初步取得X00CUT以后，在此基础上旋转测试的次数
+	
+SURF_COAL		%%是否使用表面并合模型（散列反应的时候使用）
+	K_START_SURF	%%从K = K_START_SURF开始应用
+	K_END_SURF	%%从K = K_END_SURF往后不再应用
+	RR0		%%核子出射到靶核表面以外RR0的地方则不再认为此核子属于靶核
+
+
+!!note:********************************************** 
+ish 0 for droplet model, 1 for DTCSM; 
+ipot, 1 for fusion dynamics such as barrier, neck 
+behavior etc, 0 for fusion cross section, 2 for fusion barrier distribution.
+momp 0 for no mom., 1 for mom. int. by Aichelin, 2 for Yukawa int.
+mdel 0 for no medium, 1 for medium effect in elastic scattering;
+mdin 0 for no medium, 1 for (m*/m)**2, 2 for quenching approach
+nsym 0 for no sym., 1 for linear dep., 2 for Csym*(rho/rho0)^u, 3 for sym. from Skyrme/supersoft.
+
+!!
+（1）initi=1：输出文件设置，main.8和选择init2；若initi=0选择init，见MAIN.12.1.1
+
+（2）iflag2 .eq. 0  call coulg1且call updt
+（2）iflag2 .eq. 1  call coulgn
+
+（3）nx00=0就是固定碰撞参数，并且x00=x00min
+（3）nx00=1则覆盖所给的碰撞参数范围
+
+（4）iflag6=1则deut=2否则deut=1
+
+（5）iflag1小于0时，不处理碰撞过程
+
+（6）iflag4=0则碰撞处理采用nrcoll(crsc)，否则用：
+	iflagcro=0时，碰撞处理依次用rcollbb、resdecay、rcollmeson和mesonabs
+	iflagcro=1时，碰撞处理依次用crossnew和rcollnew

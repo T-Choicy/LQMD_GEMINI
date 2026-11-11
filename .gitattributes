@@ -1,0 +1,3 @@
+* -text
+fortran/** -whitespace
+mass_tables/** -whitespace

@@ -1,0 +1,39 @@
+ Ca+Pb             ,title,
+   99              ,Z=Compound nucleus charge,
+   242             ,A=Compund nucleus mass,
+   8.             ,Excn=excitation energy (MeV),
+   0.             ,dexcn=excitation energy fluctuations (from target width)
+   0                ,lmin=minimum spin (hbar),
+   0                ,lmax=maximum spin (hbar),
+   10               ,R_num=*2l+1 events per l-wave,
+   0                ,N_weight=weighting factor,
+**************** output choices ************************
+ .false.            ,diagnostics, true=events typed out
+ .false.            ,time_flag=.true. emission times written out on event file
+ .false.            ,J_flag
+ .FALSE.            ,ex_flag
+ .False.             ,I_angle=switch to calculate angles,
+ .False.            ,true=quantum treatment of angles, false=semi-classical
+**************** fission and IMF parameters ************************
+     1              ,imf_option,1=symmetric fission,2=all asymmetries,0=no imf
+     0.             ,t_delay=fission delay time in 10E-21 seconds
+     0.             ,sig_delay = first moment of delay as function of eta
+ .TRUE.             ,sharp_delay, gamma(t) = 0 (T) or gamma_0*t/t_delay(F)
+     3              ,Z_imf_min, minimum imf charge considered,
+     0.0            ,Kramers factor (only for IMF_option=1)
+  .FALSE.           ,LESTONE
+     1.             ,b_scale
+**************** evaporation + gamma emission************************
+ .true.             ,tl_iwbc, true=tl's from IWBC model,False=sharp cut-off
+ .FALSE.            ,k_sum,
+ .false.            ,polarization
+      0             ,exotic_index
+     -1.0           ,ratio
+     2              ,mass_option,0=liquid drop,1=expimental,2=shell fadeout
+    50.0             ,E2 strength in Weiskofp units (default=50)
+    0.1             ,E1_strength
+    1e-7            ,threshold
+*************** level density *****************************************
+    0              ,aden_type
+    8              ,aden_0=level density constant (k=A/a)
+    1.00           ,a_scale

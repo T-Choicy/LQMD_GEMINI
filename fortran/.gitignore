@@ -1,0 +1,71 @@
+# Build artifacts (Fortran / Visual Studio)
+*.mod
+*.obj
+*.exe
+*.opt
+*.ncb
+*.plg
+*.u2d
+*.env
+node_modules/
+Debug/
+Release/
+x64/
+Win32/
+
+# LQMD main data files
+coll.dat
+MONITOR.dat
+inf.out
+initangm.dat
+updtim_wrong.dat
+LCPs_*.dat
+
+# Solution / project files
+Console1.sln
+Console1.u2d
+Console1.vfproj
+
+# Analysis output files
+TEELECS_out*.dat
+FSVT.dat
+
+# Other generated / temp
+*.o
+WIGCONSTR.dat
+WRITECHAR(2)
+WRTEXC.dat
+WRTPHAS.dat
+enengy.dat
+excitation enengy.dat
+eta.dat
+drflhy.dat
+invxsec.dat
+trans.dat
+A-mul.dat
+007E.out
+0result.inf
+
+# initialization files
+FOR011.dat
+SHELL.DAT
+Sqr_pot.dat
+E_SH.out
+0result.inf
+Sqr_pot.dat
+dtini.dat
+encomps.dat
+rad_ener.dat
+dmass.dat
+ave.dat
+rms.dat
+
+# IDE / editor
+.vs/
+.claude/
+
+# Backup files
+*.bak
+*.bak_grid
+param_test/
+Frictional Cooling/

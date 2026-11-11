@@ -1,0 +1,140 @@
+%%CONT_ANA
+0			!NTH_RUN
+0			!NTH_NOH
+1,10000     !NRMIN, NRMAX
+%%Simulation
+10000       !events
+8.25		!X00CUT
+1, 1, 1 		!kktot, kkmin, kkmax 时间演化
+3.5, 0.2		!rr0, pp0
+0			!READMESON
+%%Models
+1, 1	 		!COLM, GEMINI(注意时域循环的注解)
+1, 10, 0		!ANGM_DEC, ANGM_LIGHT, TESTANG
+0			!SURF_COAL
+%%Coalescencs
+5			!MCFR
+0, 0 		!TESTEX, OUTENE
+%%Gemini
+2.0, 1000.0, 100	!DECNEXC1, DECNEXC2, DECIZ
+0				!PRINTCLKIN
+0, 1, 55			!PRINTDEC, Z11, Z22
+1			!gemini_in_out
+%%EnergyCheck
+0			!ECHECK
+%%TEAE
+1			!TEAE
+1, 1			!EXCCROSS1, TEAMUL
+0.0, 1.5		!EX1DOWN, EX1UP
+1.5 3.0		!EX2DOWN, EX2UP
+3.0			!EX3DOWN
+0.0		!EXPNT
+0			!PRTEX_WRTPHAS
+%%Yields
+1, 1, 0, 75		!CNPCS, IPCS, LCPs, TEELECS, TECOLD
+%%Kinematics
+0, 0, 1, 0, 100.0000	!LNVIC, ELEKED, DDCSS_LNKED, DDCSS_LNKED_S, DIFF
+0.1250000		!B_DIFF
+%%Tasks
+0			!FSVT
+%%Dynamics
+-0.2825, 0.2300, 1.16667                     !alpha/GeV,beta/GeV,gamma
+0.0120, 0.0097, 1.66667            !gsur,gtau,eta,gsym
+-0.00270, 0.0320		!gsym, symm
+0			!momp
+%%Gemini settings
+**************** fission and IMF(中等质量碎片) parameters **************************************
+     2             	,imf_option,1=symmetric fission,2=all asymmetries,0=no imf
+     20.             	,t_delay=fission delay time in 10E-21 seconds
+     1.             	,sig_delay = first moment of delay as function of eta
+ .TRUE.         	,sharp_delay, gamma(t) = 0 (T) or gamma_0*t/t_delay(F)
+     3              	,Z_imf_min, minimum imf charge considered,
+     0.0            	,Kramers factor (only for IMF_option=1)
+  .FALSE.        	,LESTONE
+     1.             	,b_scale
+**************** evaporation + gamma emission************************************************
+ .true.             	,tl_iwbc, true=tl's from IWBC model,False=sharp cut-off
+ .false.          	,k_sum,
+ .false.            	,polarization
+      3             	,exotic_index
+     2              	,mass_option,0=liquid drop,1=expimental,2=shell fadeout
+    50.0            	,E2 strength in Weiskofp units (default=50)
+    0.1             	,E1_strength
+    1e-7            	,threshold
+*************** level density(能级密度) ***********************************************************
+    0              	,aden_type
+    8              	,aden_0=level density constant (k=A/a if aden_type is 0)
+    7.3            ,k0
+    12             ,kinf
+    1.00           	,a_scale ! 实际代码中只作用于fission and IMF
+
+
+
+
+!!Functions and tabs:
+
+（0）Simulation
+	EVENTS		%%The number of events to analyze
+	X00CUT		%%The Cut of Impact parameters
+	kktot		%%总的时刻数（IT=1,...,kktot）
+	kkmin		%%it从kkmin开始分析
+	kkmax		%%it到kkmax为止
+	rr0, pp0		%%rr0：并合模型中，一个核子离核均方根表面的最大距离，超过此距离则不纳入此核相空间
+			中两相邻核子最远距离为rr0和pp0，否则就不是相邻
+（1）Models
+	COLM		%%Coalescence model（Classical）
+		MCFR		%%热碎片电荷数大于MCFR才会计算其激发能，小于等于MCFR的碎片平均能量设为
+				负的结合能；
+		MOMP		%%是否使用动量相关
+		TESTEX		%%测试激发能构造是否正确（在抽样程序prep-win.for中产生一个装有基态核信息的
+				tini.dat文件，从tini中输入，对比prep-win.for和anahyp.for两个程序输出的各项
+				能量是否一致。注意，需要有一个coll.out文件来读入靶核的A，你可以手动在coll.out
+				中输入这个量）；
+		OUTENE	%%输出所有结团的各项单核子能量（电荷数<MCFR的话，则没有计算，只是取为基态
+				结合能，故不输出）
+		TEAE		%%Time Evolution of Average Excitation Energy
+			EXCCROSS	%%最后还输出激发能截面到CROSSEXC.DAT中（为了缩短计算时间，可以
+					设kkmin，kkmax在必需的时间点）
+			TEAMUL	%%在设定时间窗口内，电荷数大于Ncmin的碎片的个数（MUL）随时间的
+					演化到TEAE.DAT或TEAMUL.DAT中；
+			EXiDOWN, EXiUP	%%激发能范围i的上下限（三个范围不可交叠），范围是[EXiDOWN, EXiUP)；
+			EXPNT		%%cascade结束时间点，排除cascade阶段的异常激发能，从此开始找激发能；
+			PRTEX_WRTPHAS	%%查看某个激发能范围内的各个事件的最大质量的激发能、最大质量和电荷
+					数大于Ncmin的碎片的个数随时间的演化；并输出指定时刻的相空间信息；
+		GEMINI		%%是否使用GEMINI退激；
+			DECNEXC1	%%总激发能<=DENEXC的热碎片不执行统计衰变
+			DECNEXC2	%%总激发能>DECNEXC2的话，就令其激发能为DECNEXC2
+			DECIZ		%%电荷数>DECIZ的热碎片不执行统计蒸发
+			PRINTCLKIN	%%输出冷热碎片的动能、每核子平均动能、极角
+			PRINTDEC	%%查看指定电荷数范围[Z11,Z22]内将要退激的热碎片的激发能，并查看统计
+					蒸发结果（热碎片电荷数要大于MCFR，热碎片的总激发能要大于DECNEXC1，
+					总电荷数要小于DECIZ才能退激，也就是才能被查看到）
+				Z11, Z22	%%指定查看退激情况的电荷数范围[Z11,Z22]
+	WIGCONSTR	%%采用WIGNER密度分布方法来构造轻核
+	ANGM_DEC	%%计算角动量（计算得到的是初始角动量减去末态平动角动量，只有末态IMF个数=1的时候，才会算，
+			否则跳过）
+	ANGM_LIGHT	%%如果电荷数大于ANGM_LIGHT的初级碎片数多于1个，则衰变时不考虑角动量
+		TESTANG		%%查看总角动量随时间的演化
+		
+（2）Yields
+	CNPCS		%%Complete nuclide production cross sections（as a function of Z, N and A respectively）
+	IPCS		%%Isotope Production Cross Sections（中子数从0-200，元素数目最多为IPCSMAX个）
+	LCPs		%%Time evolution of Light Charged Particles
+	TEELECS	%%Time evolution of element cross sections 在TEELEC_in.in中讀入要輸出的元素，在TEELECS_	
+			out.dat中輸出冷热元素截面隨時間變化（冷碎片是通过在该时间点应用GEMINI得到）
+		TECOLD		%%演化到TECOLD fm/c之时才开始对冷碎片进行计数
+				%%热碎片（合并得到）、冷碎片（gemini得到）
+（3）Kinematics
+	DDCSS_LNKED	%%Double differential cross sections(unit: dsigma/dE*dtheta) for spallation reactions
+			%%Lgiht nuclide kinetic energy distributions（在DDCSS_LNKED.in中输入，能量范围0-100MeV）
+		DDCSS_LNKED_S	%%取为1的时候，采用十分制对数横坐标输出，取为0时采用线性横坐标输出。注意，十分
+				制刻度需要自己在源程序中设置数组的参数，dkin需要设为1.0，若刻度是20分制的话则设为
+				0.5，如此类推）
+		DIFF		%%每核子动能小于DIFF的热碎片排除在外（模型自身弥散造成的低动能轻核，DIFFUSION）
+		B_DIFF		%%热碎片每核子动能小于DIFF的时候，仍然允许DIFF左边一定范围的计数，范围由B_DIFF
+				%%确定。B_DIFF=0.125的话，范围是1MeV。0.25的话是2MeV。0.5的话是4MeV。1.MeV
+				%%1.0的话是8MeV。2.的话是16MeV。4.的话是32MeV。8.的话是64MeV。16.的话是128MeV。
+	ELEKED		%%某种元素的总截面（在ELEKED_in.in中输入，能量范围为0-100MeV）
+	LNVIC		%%不变截面的速度分布
+（4）Tasks
+	FSVT		%%the first Summer vacation task（对称能、动量相关势、pi-N势能对pi-/pi+之影响）

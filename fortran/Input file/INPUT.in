@@ -1,0 +1,7 @@
+160	!NFILE
+31250	!NRUN_PER
+208Pb	!THE NAME OF RUN
+5	!T_1ST（从提交到输出第一个记录的时间）
+1	!T_PER（每个记录之间的时间间隔）
+1	!CALL_ANA(是否调用分析程序，至少编译)
+0	!FAILS PER FILE
